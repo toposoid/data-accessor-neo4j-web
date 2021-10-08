@@ -3,6 +3,8 @@ This is a WEB API that works as a microservice within the Toposoid project.
 Toposoid is a knowledge base construction platform.(see [Toposoid　Root Project](https://github.com/toposoid/toposoid.git))
 This microservice get information from Neo4J graph database. outputs the result in JSON.
 
+[![Unit Test And Build Image Action](https://github.com/toposoid/scala-data-accessor-neo4j-web/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/toposoid/scala-data-accessor-neo4j-web/actions/workflows/action.yml)
+
 <img width="1197" alt="2021-09-26 19 59 57" src="https://user-images.githubusercontent.com/82787843/134804960-43050ed6-35d6-4d86-bbf4-97e0c359d63b.png">
 
 ## Dependency in toposoid Project
