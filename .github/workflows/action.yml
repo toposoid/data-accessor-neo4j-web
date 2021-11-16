@@ -1,13 +1,14 @@
-name: Unit Test And Build Image Action
+name: Test And Build
 on:
   push:
     branches:
       - main
+      - feature
   workflow_dispatch:
 env:
   PJ_ACTOR: toposoid
   PJ_REPO: scala-data-accessor-neo4j-web
-  PJ_VERSION: 0.1.0
+  PJ_VERSION: 0.1.1
 jobs:
   unit-test_scala-data-accessor-neo4j-web:
     runs-on: ubuntu-20.04
@@ -40,3 +41,5 @@ jobs:
           context: .
           push: true
           tags: ${{ env.PJ_ACTOR }}/${{ env.PJ_REPO }}:${{ env.PJ_VERSION }}
+          build-args: |
+            TARGET_BRANCH=${{ env.PJ_BRANCH }}
