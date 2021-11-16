@@ -16,8 +16,8 @@ libraryDependencies += "com.ideal.linked" %% "scala-common" % "0.1.0"
 libraryDependencies += "com.ideal.linked" %% "scala-data-accessor-neo4j" % "0.1.0"
 libraryDependencies += "com.ideal.linked" %% "toposoid-knowledgebase-model" % "0.1.0"
 libraryDependencies += "com.ideal.linked" %% "toposoid-deduction-protocol-model" % "0.1.0"
-libraryDependencies += "com.ideal.linked" %% "toposoid-common" % "0.1.0"
+libraryDependencies += "com.ideal.linked" %% "toposoid-common" % "0.1.1"
 libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
-libraryDependencies += "com.ideal.linked" %% "toposoid-sentence-transformer-neo4j" % "0.1.0" % Test
+libraryDependencies += "com.ideal.linked" %% "toposoid-sentence-transformer-neo4j" % "0.1.1" % Test
 
