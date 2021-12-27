@@ -113,8 +113,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * @return
    */
   private def makeJsonPartialStr(key:String, value:ValueAdapter): Neo4jRecodeUnit ={
-    val defaultLogicNode = new KnowledgeBaseNode("","",-99,-99,false, "", "", "","", "", Map.empty[String, Map[String, String]], Map.empty[String,String], Map.empty[String,String],false,false,"","","", "-",1)
-    val defaultLogicEdge = new KnowledgeBaseEdge("","", "",  "", "-")
+    val defaultLogicNode = new KnowledgeBaseNode("","",-99,-99,false, "", "", "","", "", Map.empty[String, Map[String, String]], Map.empty[String,String], Map.empty[String,String],false,false,"","","", "-",1, lang= "")
+    val defaultLogicEdge = new KnowledgeBaseEdge("","", "",  "", "-", "")
     val defaultSynonymNode = new KnowledgeBaseSynonymNode("", "", "")
     val defaultSynonymEdge = new KnowledgeBaseSynonymEdge("", "", -1.0f)
     val defaultOtherElement = new OtherElement("")
@@ -151,7 +151,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             node.get("modalityType").asString(),
             node.get("logicType").asString(),
             nodeType,
-            node.get("extentText").asString()
+            node.get("lang").asString(),
+            node.get("extentText").asString(),
           )
           new Neo4jRecodeUnit(logicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
 
@@ -181,6 +182,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             link.get("caseName").asString(),
             link.get("dependType").asString(),
             link.get("logicType").asString(),
+            link.get("lang").asString()
           )
           new Neo4jRecodeUnit(defaultLogicNode, logicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
 
