@@ -30,7 +30,7 @@ services:
     image: toposoid/toposoid-sentence-parser-japanese-web:0.1-SNAPSHOT
     tty: true
     environment:
-      - PRIVATE_IP_ADDRESS=192.168.33.10
+      - PRIVATE_IP_ADDRESS=172.30.0.4
       - PLAY_HTTP_PORT=9001
     networks:
       app_net:
@@ -41,7 +41,7 @@ services:
     image: toposoid/scala-common-nlp-japanese-web:0.1-SNAPSHOT
     tty: true
     environment:
-      - PRIVATE_IP_ADDRESS=192.168.33.10
+      - PRIVATE_IP_ADDRESS=172.30.0.5
       - PLAY_HTTP_PORT=9006
     networks:
       app_net:
@@ -52,7 +52,7 @@ services:
     image: toposoid/toposoid-sentence-parser-english-web:0.1-SNAPSHOT
     tty: true
     environment:
-      - PRIVATE_IP_ADDRESS=192.168.33.10
+      - PRIVATE_IP_ADDRESS=172.30.0.6
       - PLAY_HTTP_PORT=9007
       - CORENLP_HOST=172.30.0.8
     networks:
@@ -64,7 +64,7 @@ services:
     image: toposoid/scala-common-nlp-english-web:0.1-SNAPSHOT
     tty: true
     environment:
-      - PRIVATE_IP_ADDRESS=192.168.33.10
+      - PRIVATE_IP_ADDRESS=172.30.0.7
       - SYNONYM_NOUN_SIMILARITY_THRESHHOLD=0.52
       - SYNONYM_VERB_SIMILARITY_THRESHHOLD=0.52
       - PLAY_HTTP_PORT=9008
