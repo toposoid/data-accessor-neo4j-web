@@ -41,7 +41,7 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
   }
 
   override def afterAll(): Unit = {
-    //Neo4JAccessor.delete()
+    Neo4JAccessor.delete()
   }
 
   val controller: HomeController = inject[HomeController]
