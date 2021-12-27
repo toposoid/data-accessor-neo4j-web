@@ -36,20 +36,21 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
 
   override def beforeAll(): Unit = {
     Neo4JAccessor.delete()
-    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("案ずるより産むが易し。", "{}" )))
+    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("案ずるより産むが易し。","ja_JP", "{}" )))
+    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("Time is money.","en_US", "{}" )))
   }
 
   override def afterAll(): Unit = {
-    Neo4JAccessor.delete()
+    //Neo4JAccessor.delete()
   }
 
   val controller: HomeController = inject[HomeController]
 
-  "The specification" should {
+  "An access of getQueryResult for Japanese knowledge" should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n) RETURN n ", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n ", "target": "" }"""))
       val result= call(controller.getQueryResult(), fr)
       status(result) mustBe OK
       contentType(result) mustBe Some("application/json")
@@ -57,11 +58,11 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
     }
   }
 
-  "The specification2" should {
+  "An access of getQueryFormattedResult for Japanese knowledge Nodes" should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n) RETURN n", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
       contentType(result) mustBe Some("application/json")
@@ -77,11 +78,11 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
     }
   }
 
-  "The specification3" should {
+  "An access of getQueryFormattedResult for Japanese knowledge Edges" should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{isMainSection:'true'}) return n, e, m", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{isMainSection:'true'}) WHERE n.lang='ja_JP' return n, e, m", "target": "" }"""))
 
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
@@ -94,6 +95,60 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
             case "n" => assert(x.value.logicNode.surface.equals("産むが"))
             case "e" => assert(x.value.logicEdge.caseStr.equals("連用"))
             case "m" => assert(x.value.logicNode.surface.equals("易し。"))
+          }
+        })
+      })
+    }
+  }
+
+  "An access of getQueryResult for English knowledge" should {
+    "returns an appropriate response" in {
+      val fr = FakeRequest(POST, "/getQueryResult")
+        .withHeaders("Content-type" -> "application/json")
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='en_US' RETURN n ", "target": "" }"""))
+      val result= call(controller.getQueryResult(), fr)
+      status(result) mustBe OK
+      contentType(result) mustBe Some("application/json")
+      assert(!contentAsString(result).equals(""))
+    }
+  }
+
+  "An access of getQueryFormattedResult for English knowledge Nodes" should {
+    "returns an appropriate response" in {
+      val fr = FakeRequest(POST, "/getQueryFormattedResult")
+        .withHeaders("Content-type" -> "application/json")
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='en_US' RETURN n", "target": "" }"""))
+      val result = call(controller.getQueryFormattedResult(), fr)
+      status(result) mustBe OK
+      contentType(result) mustBe Some("application/json")
+      val jsonResult: String = contentAsJson(result).toString()
+      val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+      val sentenceMap: List[(Int, String)] = neo4jRecords.records.reverse.map(record => {
+        record.filter(x => x.key.equals("n")).map(y =>
+          y.value.logicNode.currentId -> y.value.logicNode.surface
+        ).head
+      })
+      val sentence: String = sentenceMap.toSeq.sortBy(_._1).foldLeft("") { (acc, x) => acc + " " + x._2 }
+      assert(sentence.trim.equals("Time is money ."))
+    }
+  }
+  "An access of getQueryFormattedResult for English knowledge Edges" should {
+    "returns an appropriate response" in {
+      val fr = FakeRequest(POST, "/getQueryFormattedResult")
+        .withHeaders("Content-type" -> "application/json")
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{caseType:'attr'}) WHERE n.lang='en_US'  return n, e, m", "target": "" }"""))
+
+      val result = call(controller.getQueryFormattedResult(), fr)
+      status(result) mustBe OK
+      val jsonResult: String = contentAsJson(result).toString()
+      val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+      assert(neo4jRecords.records.size == 1)
+      neo4jRecords.records.reverse.map(record => {
+        record.map(x => {
+          x.key match {
+            case "n" => assert(x.value.logicNode.surface.equals("is"))
+            case "e" => assert(x.value.logicEdge.caseStr.equals("attr"))
+            case "m" => assert(x.value.logicNode.surface.equals("money"))
           }
         })
       })
