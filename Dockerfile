@@ -12,7 +12,7 @@ RUN git clone https://github.com/toposoid/scala-data-accessor-neo4j-web.git \
 && sbt playUpdateSecret 1> /dev/null \
 && sbt dist \
 && cd /app/scala-data-accessor-neo4j-web/target/universal \
-&& unzip -o scala-data-accessor-neo4j-web-0.1-SNAPSHOT.zip
+&& unzip -o scala-data-accessor-neo4j-web-0.2.zip
 
 
 COPY ./docker-entrypoint.sh /app/
