@@ -32,11 +32,11 @@ import play.api.test.Helpers.{POST, contentType, defaultAwaitTimeout, status}
 import play.api.test.Helpers._
 import play.api.test._
 
-class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
+class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
 
   override def beforeAll(): Unit = {
     Neo4JAccessor.delete()
-    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("案ずるより産むが易し。", "{}" )))
+    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("案ずるより産むが易し。","ja_JP", "{}" )))
   }
 
   override def afterAll(): Unit = {
@@ -45,11 +45,11 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
 
   val controller: HomeController = inject[HomeController]
 
-  "The specification" should {
+  "An access of getQueryResult for Japanese knowledge" should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n) RETURN n ", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n ", "target": "" }"""))
       val result= call(controller.getQueryResult(), fr)
       status(result) mustBe OK
       contentType(result) mustBe Some("application/json")
@@ -57,11 +57,11 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
     }
   }
 
-  "The specification2" should {
+  "An access of getQueryFormattedResult for Japanese knowledge Nodes" should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n) RETURN n", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
       contentType(result) mustBe Some("application/json")
@@ -77,11 +77,11 @@ class HomeControllerSpec extends PlaySpec with BeforeAndAfter with BeforeAndAfte
     }
   }
 
-  "The specification3" should {
+  "An access of getQueryFormattedResult for Japanese knowledge Edges" should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{isMainSection:'true'}) return n, e, m", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{isMainSection:'true'}) WHERE n.lang='ja_JP' return n, e, m", "target": "" }"""))
 
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
