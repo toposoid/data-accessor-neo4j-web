@@ -144,7 +144,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             convertMapForRangeExpression(node.get("rangeExpressions").asString()),
             convertMap(node.get("categories").asString()),
             convertMap(node.get("domains").asString()),
-            node.get("isDenial").asString().toBoolean,
+            node.get("isDenialWord").asString().toBoolean,
             node.get("isConditionalConnection").asString().toBoolean,
             node.get("normalizedNameYomi").asString(),
             node.get("surfaceYomi").asString(),
