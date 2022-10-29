@@ -31,12 +31,13 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentType, defaultAwaitTimeout, status}
 import play.api.test.Helpers._
 import play.api.test._
+import io.jvm.uuid.UUID
 
 class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
 
   override def beforeAll(): Unit = {
     Neo4JAccessor.delete()
-    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
+    Sentence2Neo4jTransformer.createGraphAuto(List(UUID.random.toString), List(Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
   }
 
   override def afterAll(): Unit = {
