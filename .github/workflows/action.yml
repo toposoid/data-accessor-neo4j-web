@@ -9,7 +9,7 @@ env:
   PJ_ACTOR: toposoid
   PJ_REPO: scala-data-accessor-neo4j-web
   PJ_BRANCH: feature
-  PJ_VERSION: 0.4-SNAPSHOT
+  PJ_VERSION: 0.4
 jobs:
   unit-test_scala-data-accessor-neo4j-web:
     runs-on: ubuntu-20.04
