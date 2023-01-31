@@ -17,10 +17,11 @@
 package controllers
 
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
-import com.ideal.linked.toposoid.knowledgebase.regist.model.Knowledge
+import com.ideal.linked.toposoid.knowledgebase.regist.model.{Knowledge, PropositionRelation}
 import com.ideal.linked.toposoid.protocol.model.neo4j.Neo4jRecords
+import com.ideal.linked.toposoid.protocol.model.parser.{KnowledgeForParser, KnowledgeSentenceSetForParser}
 import com.ideal.linked.toposoid.sentence.transformer.neo4j.Sentence2Neo4jTransformer
-import com.typesafe.scalalogging.{LazyLogging}
+import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
@@ -31,12 +32,22 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentType, defaultAwaitTimeout, status}
 import play.api.test.Helpers._
 import play.api.test._
+import io.jvm.uuid.UUID
 
 class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
 
+  def registSingleClaim(knowledgeForParser:KnowledgeForParser): Unit = {
+    val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
+      List.empty[KnowledgeForParser],
+      List.empty[PropositionRelation],
+      List(knowledgeForParser),
+      List.empty[PropositionRelation])
+    Sentence2Neo4jTransformer.createGraph(knowledgeSentenceSetForParser)
+  }
+
   override def beforeAll(): Unit = {
     Neo4JAccessor.delete()
-    Sentence2Neo4jTransformer.createGraphAuto(List(Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
+    registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
   }
 
   override def afterAll(): Unit = {
