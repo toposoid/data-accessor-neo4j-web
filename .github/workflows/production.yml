@@ -1,8 +1,10 @@
 name: Test And Build
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
-      - feature
+      - main
   workflow_dispatch:
 env:
   PJ_ACTOR: toposoid
