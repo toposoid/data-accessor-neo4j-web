@@ -30,7 +30,7 @@ import play.api._
 import play.api.libs.json.Json
 import play.api.mvc._
 
-import scala.collection.JavaConversions._
+import  scala.jdk.CollectionConverters._
 
 
 /**
@@ -87,9 +87,11 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       while (result.hasNext()) { //カラム方向のループ
         val record:Record = result.next()
         var recordMapList:List[Neo4jRecordMap] = List.empty[Neo4jRecordMap]
-        for(pair <- record.fields )  {
-          pair.key()
-          val recordMap = new Neo4jRecordMap(pair.key, makeJsonPartialStr(pair.key(), pair.value().asInstanceOf[ValueAdapter]))
+
+        val fields = record.fields.listIterator()
+        while(fields.hasNext){
+          val pair =  fields.next()
+          val recordMap = new Neo4jRecordMap(pair.key, makeJsonPartialStr(pair.key, pair.value().asInstanceOf[ValueAdapter]))
           recordMapList = recordMapList :+ recordMap
         }
         recordList = recordList :+ recordMapList

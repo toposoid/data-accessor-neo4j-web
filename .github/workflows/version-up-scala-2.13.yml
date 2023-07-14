@@ -1,16 +1,14 @@
 name: Test And Build
 on:
-  pull_request:
-    types:
-      - closed
+  push:
     branches:
-      - main
+      - version-up-scala-2.13
   workflow_dispatch:
 env:
   PJ_ACTOR: toposoid
   PJ_REPO: scala-data-accessor-neo4j-web
-  PJ_BRANCH: main
-  PJ_VERSION: 0.4
+  PJ_BRANCH: version-up-scala-2.13
+  PJ_VERSION: 0.5-SNAPSHOT
 jobs:
   unit-test_scala-data-accessor-neo4j-web:
     runs-on: self-hosted
