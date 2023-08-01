@@ -80,7 +80,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
       val sentenceMap: List[(Int, String)] = neo4jRecords.records.reverse.map(record => {
         record.filter(x => x.key.equals("n")).map(y =>
-          y.value.logicNode.currentId -> y.value.logicNode.surface
+          y.value.logicNode.predicateArgumentStructure.currentId -> y.value.logicNode.predicateArgumentStructure.surface
         ).head
       })
       val sentence: String = sentenceMap.toSeq.sortBy(_._1).foldLeft("") { (acc, x) => acc + x._2 }
@@ -102,9 +102,9 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       neo4jRecords.records.reverse.map(record => {
         record.map(x => {
           x.key match {
-            case "n" => assert(x.value.logicNode.surface.equals("産むが"))
+            case "n" => assert(x.value.logicNode.predicateArgumentStructure.surface.equals("産むが"))
             case "e" => assert(x.value.logicEdge.caseStr.equals("連用"))
-            case "m" => assert(x.value.logicNode.surface.equals("易し。"))
+            case "m" => assert(x.value.logicNode.predicateArgumentStructure.surface.equals("易し。"))
           }
         })
       })
