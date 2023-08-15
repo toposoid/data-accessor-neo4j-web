@@ -19,7 +19,7 @@ package controllers
 import com.google.gson.{Gson, GsonBuilder}
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
 import com.ideal.linked.toposoid.common.{CLAIM, PREMISE}
-import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, LocalContext, OtherElement, PredicateArgumentStructure}
+import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, KnowledgeFeatureReference, LocalContext, OtherElement, PredicateArgumentStructure}
 import com.ideal.linked.toposoid.protocol.model.neo4j.{CypherQuery, Neo4jRecodeUnit, Neo4jRecordMap, Neo4jRecords}
 import com.typesafe.scalalogging.LazyLogging
 import org.neo4j.driver.{Record, Result}
@@ -115,13 +115,16 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * @return
    */
   private def makeJsonPartialStr(key:String, value:ValueAdapter): Neo4jRecodeUnit ={
+
+
     val defaltLocalContext = new LocalContext(
         lang = "",
         namedEntity = "",
         rangeExpressions = Map.empty[String, Map[String, String]],
         categories = Map.empty[String,String],
         domains = Map.empty[String,String],
-        referenceIdMap = Map.empty[String,String])
+        knowledgeFeatureReferences = List.empty[KnowledgeFeatureReference]
+    )
 
     val defaultPredicateArgumentStructure = new PredicateArgumentStructure(
         currentId = -99,
@@ -146,8 +149,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         propositionId = "",
         sentenceId = "",
         predicateArgumentStructure = defaultPredicateArgumentStructure,
-        localContext = defaltLocalContext,
-        extentText = "{}")
+        localContext = defaltLocalContext)
 
     val defaultLogicEdge = new KnowledgeBaseEdge("","", "",  "", "-", "")
     val defaultSynonymNode = new KnowledgeBaseSynonymNode("", "", "")
@@ -171,7 +173,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             rangeExpressions = convertMapForRangeExpression(node.get("rangeExpressions").asString()),
             categories = convertMap(node.get("categories").asString()),
             domains = convertMap(node.get("domains").asString()),
-            referenceIdMap = convertMap(node.get("referenceIdMap").asString())
+            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString())
           )
 
           val predicateArgumentStructure = new PredicateArgumentStructure(
@@ -197,8 +199,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             propositionId = node.get("propositionId").asString(),
             sentenceId = node.get("sentenceId").asString(),
             predicateArgumentStructure = predicateArgumentStructure,
-            localContext = localContext,
-            extentText = node.get("extentText").asString()
+            localContext = localContext
           )
 
           new Neo4jRecodeUnit(logicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
@@ -265,6 +266,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    */
   private def convertMap(s:String):Map[String,String] ={
     Json.parse(s).as[Map[String,String]]
+  }
+
+  /**
+   * Deserialize the Json string
+   * @param l
+   * @return
+   */
+  private def convertList2JsonForKnowledgeFeatureReference(s:String): List[KnowledgeFeatureReference] = {
+    Json.parse(s).as[List[KnowledgeFeatureReference]]
   }
 
   /**
