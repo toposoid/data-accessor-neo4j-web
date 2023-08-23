@@ -210,7 +210,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             node.get("nodeId").asString(),
             node.get("nodeName").asString(),
             node.get("propositionId").asString(),
-            node.get("sentenceId").toString
+            node.get("sentenceId").asString()
           )
           new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge,  synonymNode, defaultSynonymEdge, defaultOtherElement)
         }else{
