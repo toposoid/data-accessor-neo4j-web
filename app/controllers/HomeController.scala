@@ -152,7 +152,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         localContext = defaltLocalContext)
 
     val defaultLogicEdge = new KnowledgeBaseEdge("","", "",  "", "-", "")
-    val defaultSynonymNode = new KnowledgeBaseSynonymNode("", "", "")
+    val defaultSynonymNode = new KnowledgeBaseSynonymNode("", "", "", "")
     val defaultSynonymEdge = new KnowledgeBaseSynonymEdge("", "", -1.0f)
     val defaultOtherElement = new OtherElement("")
 
@@ -209,7 +209,8 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
           val synonymNode:KnowledgeBaseSynonymNode = new KnowledgeBaseSynonymNode(
             node.get("nodeId").asString(),
             node.get("nodeName").asString(),
-            node.get("propositionId").asString()
+            node.get("propositionId").asString(),
+            node.get("sentenceId").toString
           )
           new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge,  synonymNode, defaultSynonymEdge, defaultOtherElement)
         }else{
