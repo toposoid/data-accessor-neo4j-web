@@ -105,7 +105,7 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("Time is money.","en_US", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{caseType:'attr'}) WHERE n.lang='en_US'  return n, e, m", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:LocalEdge]-(m:ClaimNode{caseType:'attr'}) WHERE n.lang='en_US'  return n, e, m", "target": "" }"""))
 
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
