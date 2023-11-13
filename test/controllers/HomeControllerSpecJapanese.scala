@@ -61,6 +61,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
 
   "An access of getQueryResult for Japanese knowledge" should {
     "returns an appropriate response" in {
+      registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryResult")
         .withHeaders("Content-type" -> "application/json")
         .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n ", "target": "" }"""))
