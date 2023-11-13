@@ -107,7 +107,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json")
-        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode{isMainSection:'true'}) WHERE n.lang='ja_JP' return n, e, m", "target": "" }"""))
+        .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:LocalEdge]-(m:ClaimNode{isMainSection:'true'}) WHERE n.lang='ja_JP' return n, e, m", "target": "" }"""))
 
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK

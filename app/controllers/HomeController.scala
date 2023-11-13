@@ -19,7 +19,7 @@ package controllers
 import com.google.gson.{Gson, GsonBuilder}
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
 import com.ideal.linked.toposoid.common.{CLAIM, IMAGE, PREMISE}
-import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, KnowledgeFeatureReference, KnowledgeFeatureReferenceEdge, LocalContext, OtherElement, PredicateArgumentStructure}
+import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSemiGlobalEdge, KnowledgeBaseSemiGlobalNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, KnowledgeFeatureReference, KnowledgeFeatureReferenceEdge, LocalContext, LocalContextForFeature, OtherElement, PredicateArgumentStructure}
 import com.ideal.linked.toposoid.protocol.model.neo4j.{CypherQuery, Neo4jRecodeUnit, Neo4jRecordMap, Neo4jRecords}
 import com.typesafe.scalalogging.LazyLogging
 import org.neo4j.driver.{Record, Result}
@@ -133,12 +133,12 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         val node:NodeValue = value.asInstanceOf[NodeValue]
         if(node.asNode().hasLabel("PremiseNode") || node.asNode().hasLabel("ClaimNode")) {
 
-          val nodeType:Int = node.asNode().hasLabel("PremiseNode") match {
+          val nodeType: Int = node.asNode().hasLabel("PremiseNode") match {
             case true => PREMISE.index
             case _ => CLAIM.index
           }
 
-          val localContext:LocalContext = new LocalContext(
+          val localContext: LocalContext = new LocalContext(
             lang = node.get("lang").asString(),
             namedEntity = node.get("namedEntity").asString(),
             rangeExpressions = convertMapForRangeExpression(node.get("rangeExpressions").asString()),
@@ -165,7 +165,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             morphemes = convertListMorphemes(node.get("morphemes").asString())
           )
 
-          val logicNode:KnowledgeBaseNode = new KnowledgeBaseNode(
+          val logicNode: KnowledgeBaseNode = new KnowledgeBaseNode(
             nodeId = node.get("nodeId").asString(),
             propositionId = node.get("propositionId").asString(),
             sentenceId = node.get("sentenceId").asString(),
@@ -173,8 +173,28 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             localContext = localContext
           )
 
-          //new Neo4jRecodeUnit(logicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
           new Neo4jRecodeUnit(Option(logicNode), defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+        }else if(node.asNode().hasLabel("SemiGlobalPremiseNode") || node.asNode().hasLabel("SemiGlobalClaimNode")) {
+
+          val sentenceType: Int = node.asNode().hasLabel("SemiGlobalPremiseNode") match {
+            case true => PREMISE.index
+            case _ => CLAIM.index
+          }
+
+          val localContextForFeature: LocalContextForFeature = new LocalContextForFeature(
+            lang = node.get("lang").asString(),
+            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString())
+          )
+
+          val semiGlobalNode:KnowledgeBaseSemiGlobalNode = new KnowledgeBaseSemiGlobalNode(
+            node.get("semiGlobalNodeId").asString(),
+            node.get("propositionId").asString(),
+            node.get("sentenceId").asString(),
+            node.get("sentence").asString(),
+            sentenceType,
+            localContextForFeature,
+          )
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, Option(semiGlobalNode), defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
 
         }else if(node.asNode().hasLabel("SynonymNode")) {
 
@@ -201,17 +221,24 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       case _ : RelationshipValue => {
         logger.debug("RelationshipValue")
         val link:RelationshipValue = value.asInstanceOf[RelationshipValue]
-        if(link.asRelationship().hasType("PremiseEdge") || link.asRelationship().hasType("ClaimEdge")){
+        if(link.asRelationship().hasType("LocalEdge")) {
 
-          val logicEdge = new KnowledgeBaseEdge(
+          val localEdge = new KnowledgeBaseEdge(
             link.asRelationship().startNodeId().toString,
             link.asRelationship().endNodeId().toString,
             link.get("caseName").asString(),
             link.get("dependType").asString(),
             link.get("logicType").asString(),
-            link.get("lang").asString()
           )
-          new Neo4jRecodeUnit(defaultLogicNode, Option(logicEdge), defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+          new Neo4jRecodeUnit(defaultLogicNode, Option(localEdge), defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+        }else if (link.asRelationship().hasType("SemiGlobalEdge")) {
+
+          val semiGlobalEdge: KnowledgeBaseSemiGlobalEdge = new KnowledgeBaseSemiGlobalEdge(
+            link.asRelationship().startNodeId().toString,
+            link.asRelationship().endNodeId().toString,
+            link.get("logicType").asString(),
+          )
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, Option(semiGlobalEdge), defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
 
         }else if(link.asRelationship().hasType("SynonymEdge")){
           val synonymEdge = new KnowledgeBaseSynonymEdge(
