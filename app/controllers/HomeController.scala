@@ -160,7 +160,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             normalizedNameYomi = node.get("normalizedNameYomi").asString(),
             surfaceYomi = node.get("surfaceYomi").asString(),
             modalityType = node.get("modalityType").asString(),
-            logicType = node.get("logicType").asString(),
+            parallelType = node.get("parallelType").asString(),
             nodeType = nodeType,
             morphemes = convertListMorphemes(node.get("morphemes").asString())
           )
@@ -228,7 +228,9 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
             link.asRelationship().endNodeId().toString,
             link.get("caseName").asString(),
             link.get("dependType").asString(),
-            link.get("logicType").asString(),
+            link.get("parallelType").asString(),
+            link.get("hasInclusion").asString().toBoolean,
+            link.get("logicType").asString()
           )
           new Neo4jRecodeUnit(defaultLogicNode, Option(localEdge), defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
         }else if (link.asRelationship().hasType("SemiGlobalEdge")) {
