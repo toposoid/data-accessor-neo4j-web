@@ -208,7 +208,9 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         } else if (node.asNode().hasLabel("ImageNode")) {
 
           val imageNode: KnowledgeFeatureReference = new KnowledgeFeatureReference(
-            id = node.get("featureId").asString(),
+            propositionId = node.get("propositionId").asString(),
+            sentenceId = node.get("sentenceId").asString(),
+            featureId= node.get("featureId").asString(),
             featureType = IMAGE.index,
             url = node.get("url").asString(),
             source = node.get("source").asString()
