@@ -47,7 +47,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     try {
       val json = request.body
       val cypherQuery:CypherQuery = Json.parse(json.toString).as[CypherQuery]
-      logger.info(cypherQuery.query)
+      logger.debug(cypherQuery.query)
       val result:Result = Neo4JAccessor.executeQueryAndReturn(cypherQuery.query)
       val jsonStrBf = new StringBuilder
       val gson:Gson = new GsonBuilder().disableHtmlEscaping().create()
