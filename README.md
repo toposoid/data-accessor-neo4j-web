@@ -5,7 +5,7 @@ This microservice get information from Neo4J graph database. outputs the result 
 
 [![Unit Test And Build Image Action](https://github.com/toposoid/scala-data-accessor-neo4j-web/actions/workflows/action.yml/badge.svg?branch=main)](https://github.com/toposoid/scala-data-accessor-neo4j-web/actions/workflows/action.yml)
 
-<img width="1197" alt="2021-09-26 19 59 57" src="https://user-images.githubusercontent.com/82787843/134804960-43050ed6-35d6-4d86-bbf4-97e0c359d63b.png">
+<img width="929" src="https://github.com/toposoid/scala-data-accessor-neo4j-web/assets/82787843/5413ffb9-7772-48e6-859a-2dadd99eb371">
 
 ## Dependency in toposoid Project
 
@@ -13,17 +13,21 @@ This microservice get information from Neo4J graph database. outputs the result 
 * Docker version 20.10.x, or later
 * docker-compose version 1.22.x
 
-## Recommended environment
-* Required: at least 8GB of RAM (The maximum heap memory size of the JVM is set to 6G (Application: 4G, Neo4J: 2G))
-* Required: 10G or higher　of HDD
+## Recommended Environment For Standalone
+* Required: at least 3GB of RAM (The maximum heap memory size of the JVM is set to 1G (Application: 1G, Neo4J: 2G))
+* Required: at least 1.59G of HDD(Docker Image Size)
 
-## Setup
+## Setup For Standalone
 ```bssh
-docker-compose up -d
+docker-compose up
 ```
-It takes more than 20 minutes to pull the Docker image for the first time.
+The first startup takes a long time until docker pull finishes.
 ## Usage
 ```bash
+#For unspecified queries
+curl -X POST -H "Content-Type: application/json" -d '{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode) return n,e,m", "target": "" }' http://localhost:9005/getQueryResult
+
+#If you want to convert the result to a specific Toposoid object
 curl -X POST -H "Content-Type: application/json" -d '{ "query":"MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode) return n,e,m", "target": "" }' http://localhost:9005/getQueryFormattedResult
 ```
 
