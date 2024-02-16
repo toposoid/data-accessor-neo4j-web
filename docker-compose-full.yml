@@ -1,7 +1,7 @@
 version: '3'
 services:
   scala-data-accessor-neo4j-web:
-    image: toposoid/scala-data-accessor-neo4j-web:0.5-SNAPSHOT
+    image: toposoid/scala-data-accessor-neo4j-web:0.5
     environment:
       - PRIVATE_IP_ADDRESS=localhost
       - TOPOSOID_GRAPHDB_HOST=neo4j
