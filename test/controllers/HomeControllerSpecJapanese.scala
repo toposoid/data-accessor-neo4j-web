@@ -200,7 +200,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
   "An access of getQueryFormattedResult for Image Nodes of Japanese knowledge." should {
     "returns an appropriate response" in {
       val reference1 = Reference(url = "http://images.cocodataset.org/val2017/000000039769.jpg", surface = "猫が", surfaceIndex = 0, isWholeSentence = false, originalUrlOrReference = "")
-      val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, weight = 128, height = 128)
+      val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, wi = 128, height = 128)
       val featureId1 = UUID.random.toString
       val knowledgeForImage1 = KnowledgeForImage(featureId1, referenceImage1)
 
