@@ -18,8 +18,8 @@ package controllers
 
 import com.google.gson.{Gson, GsonBuilder}
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
-import com.ideal.linked.toposoid.common.{CLAIM, PREMISE}
-import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, OtherElement}
+import com.ideal.linked.toposoid.common.{CLAIM, IMAGE, PREMISE}
+import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSemiGlobalEdge, KnowledgeBaseSemiGlobalNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, KnowledgeFeatureReference, KnowledgeFeatureReferenceEdge, LocalContext, LocalContextForFeature, OtherElement, PredicateArgumentStructure}
 import com.ideal.linked.toposoid.protocol.model.neo4j.{CypherQuery, Neo4jRecodeUnit, Neo4jRecordMap, Neo4jRecords}
 import com.typesafe.scalalogging.LazyLogging
 import org.neo4j.driver.{Record, Result}
@@ -27,11 +27,10 @@ import org.neo4j.driver.internal.value.{NodeValue, RelationshipValue, StringValu
 
 import javax.inject._
 import play.api._
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OWrites, Reads}
 import play.api.mvc._
 
-import scala.collection.JavaConversions._
-
+import scala.jdk.CollectionConverters._
 
 /**
  * This controller creates an `Action` to get　information from Neo4J graph database.
@@ -48,7 +47,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     try {
       val json = request.body
       val cypherQuery:CypherQuery = Json.parse(json.toString).as[CypherQuery]
-      logger.info(cypherQuery.query)
+      logger.debug(cypherQuery.query)
       val result:Result = Neo4JAccessor.executeQueryAndReturn(cypherQuery.query)
       val jsonStrBf = new StringBuilder
       val gson:Gson = new GsonBuilder().disableHtmlEscaping().create()
@@ -87,9 +86,11 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       while (result.hasNext()) { //カラム方向のループ
         val record:Record = result.next()
         var recordMapList:List[Neo4jRecordMap] = List.empty[Neo4jRecordMap]
-        for(pair <- record.fields )  {
-          pair.key()
-          val recordMap = new Neo4jRecordMap(pair.key, makeJsonPartialStr(pair.key(), pair.value().asInstanceOf[ValueAdapter]))
+
+        val fields = record.fields.listIterator()
+        while(fields.hasNext){
+          val pair =  fields.next()
+          val recordMap = Neo4jRecordMap(key = pair.key, makeJsonPartialStr(pair.key, value = pair.value().asInstanceOf[ValueAdapter]))
           recordMapList = recordMapList :+ recordMap
         }
         recordList = recordList :+ recordMapList
@@ -113,11 +114,18 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * @return
    */
   private def makeJsonPartialStr(key:String, value:ValueAdapter): Neo4jRecodeUnit ={
-    val defaultLogicNode = new KnowledgeBaseNode("","",-99,-99,false, "", "", "","", "", Map.empty[String, Map[String, String]], Map.empty[String,String], Map.empty[String,String],false,false,"","","", "-",1, lang= "")
-    val defaultLogicEdge = new KnowledgeBaseEdge("","", "",  "", "-", "")
-    val defaultSynonymNode = new KnowledgeBaseSynonymNode("", "", "")
-    val defaultSynonymEdge = new KnowledgeBaseSynonymEdge("", "", -1.0f)
-    val defaultOtherElement = new OtherElement("")
+
+    val defaultLogicNode = None
+    val defaultLogicEdge = None
+    val defaultSemiGlobalNode = None
+    val defaultSemiGlobalEdge  = None
+    val defaultGlobalNode = None
+    val defaultGlobalEdge = None
+    val defaultSynonymNode = None
+    val defaultSynonymEdge = None
+    val defaultKnowledgeFeatureReference = None
+    val defaultKnowledgeFeatureReferenceEdge = None
+    val defaultOtherElement = None
 
     value match {
       case _ : NodeValue => {
@@ -125,88 +133,145 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         val node:NodeValue = value.asInstanceOf[NodeValue]
         if(node.asNode().hasLabel("PremiseNode") || node.asNode().hasLabel("ClaimNode")) {
 
-          val nodeType:Int = node.asNode().hasLabel("PremiseNode") match {
+          val nodeType: Int = node.asNode().hasLabel("PremiseNode") match {
             case true => PREMISE.index
             case _ => CLAIM.index
           }
 
-          val logicNode:KnowledgeBaseNode = new KnowledgeBaseNode(
-            node.get("nodeId").asString(),
-            node.get("propositionId").asString(),
-            node.get("currentId").asString().toInt,
-            node.get("parentId").asString().toInt,
-            node.get("isMainSection").asString().toBoolean,
-            node.get("surface").asString(),
-            node.get("normalizedName").asString(),
-            node.get("dependType").asString(),
-            node.get("caseType").asString(),
-            node.get("namedEntity").asString(),
-            convertMapForRangeExpression(node.get("rangeExpressions").asString()),
-            convertMap(node.get("categories").asString()),
-            convertMap(node.get("domains").asString()),
-            node.get("isDenialWord").asString().toBoolean,
-            node.get("isConditionalConnection").asString().toBoolean,
-            node.get("normalizedNameYomi").asString(),
-            node.get("surfaceYomi").asString(),
-            node.get("modalityType").asString(),
-            node.get("logicType").asString(),
-            nodeType,
-            node.get("lang").asString(),
-            node.get("extentText").asString(),
+          val localContext: LocalContext = new LocalContext(
+            lang = node.get("lang").asString(),
+            namedEntity = node.get("namedEntity").asString(),
+            rangeExpressions = convertMapForRangeExpression(node.get("rangeExpressions").asString()),
+            categories = convertMap(node.get("categories").asString()),
+            domains = convertMap(node.get("domains").asString()),
+            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString())
           )
-          new Neo4jRecodeUnit(logicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
 
-        }else if(node.asNode().hasLabel("SynonymNode")){
+          val predicateArgumentStructure = new PredicateArgumentStructure(
+            currentId = node.get("currentId").asString().toInt,
+            parentId = node.get("parentId").asString().toInt,
+            isMainSection = node.get("isMainSection").asString().toBoolean,
+            surface = node.get("surface").asString(),
+            normalizedName = node.get("normalizedName").asString(),
+            dependType = node.get("dependType").asString(),
+            caseType = node.get("caseType").asString(),
+            isDenialWord = node.get("isDenialWord").asString().toBoolean,
+            isConditionalConnection = node.get("isConditionalConnection").asString().toBoolean,
+            normalizedNameYomi = node.get("normalizedNameYomi").asString(),
+            surfaceYomi = node.get("surfaceYomi").asString(),
+            modalityType = node.get("modalityType").asString(),
+            parallelType = node.get("parallelType").asString(),
+            nodeType = nodeType,
+            morphemes = convertListMorphemes(node.get("morphemes").asString())
+          )
 
-          val synonymNode:KnowledgeBaseSynonymNode = new KnowledgeBaseSynonymNode(
+          val logicNode: KnowledgeBaseNode = new KnowledgeBaseNode(
+            nodeId = node.get("nodeId").asString(),
+            propositionId = node.get("propositionId").asString(),
+            sentenceId = node.get("sentenceId").asString(),
+            predicateArgumentStructure = predicateArgumentStructure,
+            localContext = localContext
+          )
+
+          new Neo4jRecodeUnit(Option(logicNode), defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+        }else if(node.asNode().hasLabel("SemiGlobalPremiseNode") || node.asNode().hasLabel("SemiGlobalClaimNode")) {
+
+          val sentenceType: Int = node.asNode().hasLabel("SemiGlobalPremiseNode") match {
+            case true => PREMISE.index
+            case _ => CLAIM.index
+          }
+
+          val localContextForFeature: LocalContextForFeature = new LocalContextForFeature(
+            lang = node.get("lang").asString(),
+            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString())
+          )
+
+          val semiGlobalNode:KnowledgeBaseSemiGlobalNode = new KnowledgeBaseSemiGlobalNode(
+            node.get("semiGlobalNodeId").asString(),
+            node.get("propositionId").asString(),
+            node.get("sentenceId").asString(),
+            node.get("sentence").asString(),
+            sentenceType,
+            localContextForFeature,
+          )
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, Option(semiGlobalNode), defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+
+        }else if(node.asNode().hasLabel("SynonymNode")) {
+
+          val synonymNode: KnowledgeBaseSynonymNode = new KnowledgeBaseSynonymNode(
             node.get("nodeId").asString(),
             node.get("nodeName").asString(),
-            node.get("propositionId").asString()
+            node.get("propositionId").asString(),
+            node.get("sentenceId").asString()
           )
-          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge,  synonymNode, defaultSynonymEdge, defaultOtherElement)
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, Option(synonymNode), defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+        } else if (node.asNode().hasLabel("ImageNode")) {
+
+          val imageNode: KnowledgeFeatureReference = new KnowledgeFeatureReference(
+            propositionId = node.get("propositionId").asString(),
+            sentenceId = node.get("sentenceId").asString(),
+            featureId= node.get("featureId").asString(),
+            featureType = IMAGE.index,
+            url = node.get("url").asString(),
+            source = node.get("source").asString()
+          )
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, Option(imageNode), defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
         }else{
-          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
         }
       }
       case _ : RelationshipValue => {
-        //sourceId:String, destinationId:String, caseStr:String, dependType:String
         logger.debug("RelationshipValue")
         val link:RelationshipValue = value.asInstanceOf[RelationshipValue]
-        if(link.asRelationship().hasType("PremiseEdge") || link.asRelationship().hasType("ClaimEdge")){
+        if(link.asRelationship().hasType("LocalEdge")) {
 
-          val start = link.asRelationship().startNodeId()
-          val end = link.asRelationship().endNodeId()
-          val logicEdge = new KnowledgeBaseEdge(
-            link.get("sourceId").asString(),
-            link.get("destinationId").asString(),
+          val localEdge = new KnowledgeBaseEdge(
+            link.asRelationship().startNodeId().toString,
+            link.asRelationship().endNodeId().toString,
             link.get("caseName").asString(),
             link.get("dependType").asString(),
-            link.get("logicType").asString(),
-            link.get("lang").asString()
+            link.get("parallelType").asString(),
+            link.get("hasInclusion").asString().toBoolean,
+            link.get("logicType").asString()
           )
-          new Neo4jRecodeUnit(defaultLogicNode, logicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
+          new Neo4jRecodeUnit(defaultLogicNode, Option(localEdge), defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+        }else if (link.asRelationship().hasType("SemiGlobalEdge")) {
+
+          val semiGlobalEdge: KnowledgeBaseSemiGlobalEdge = new KnowledgeBaseSemiGlobalEdge(
+            link.asRelationship().startNodeId().toString,
+            link.asRelationship().endNodeId().toString,
+            link.get("logicType").asString(),
+          )
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, Option(semiGlobalEdge), defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
 
         }else if(link.asRelationship().hasType("SynonymEdge")){
           val synonymEdge = new KnowledgeBaseSynonymEdge(
-            link.get("sourceId").asString(),
-            link.get("destinationId").asString(),
+            link.asRelationship().startNodeId().toString,
+            link.asRelationship().endNodeId().toString,
             link.get("similarity").asFloat()
           )
-          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSynonymNode, synonymEdge, defaultOtherElement)
-        }else{
-          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, Option(synonymEdge), defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
+        } else if (link.asRelationship().hasType("ImageEdge")) {
+          val imageEdge = new KnowledgeFeatureReferenceEdge(
+            link.asRelationship().startNodeId().toString,
+            link.asRelationship().endNodeId().toString
+          )
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, Option(imageEdge), defaultOtherElement)
+        }
+        else{
+          new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
         }
       }
       case _ : StringValue => {
         logger.debug("StringValue")
         val element:StringValue = value.asInstanceOf[StringValue]
         val otherElement = new OtherElement(element.asString())
-        new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, otherElement)
+        new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, Option(otherElement))
 
       }
       case _ => {
         logger.warn("Not Match")
-        new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSynonymNode, defaultSynonymEdge, defaultOtherElement)
+        new Neo4jRecodeUnit(defaultLogicNode, defaultLogicEdge, defaultSemiGlobalNode, defaultSemiGlobalEdge, defaultGlobalNode, defaultGlobalEdge, defaultSynonymNode, defaultSynonymEdge, defaultKnowledgeFeatureReference, defaultKnowledgeFeatureReferenceEdge, defaultOtherElement)
       }
     }
   }
@@ -221,6 +286,15 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
   }
 
   /**
+   * Deserialize the Json string
+   * @param l
+   * @return
+   */
+  private def convertList2JsonForKnowledgeFeatureReference(s:String): List[KnowledgeFeatureReference] = {
+    Json.parse(s).as[List[KnowledgeFeatureReference]]
+  }
+
+  /**
    * Deserialize the Json string for the RangeExpression
    * @param s
    * @return
@@ -229,6 +303,9 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     Json.parse(s).as[Map[String, Map[String, String]]]
   }
 
+  private def convertListMorphemes(s:String):List[String] = {
+    Json.parse(s).as[List[String]]
+  }
   /**
    * Formatting Json
    * @param s
