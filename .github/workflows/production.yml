@@ -67,7 +67,7 @@ jobs:
           tags: ${{ env.PJ_ACTOR }}/${{ env.PJ_REPO }}:${{ env.PJ_VERSION }}
           build-args: |
             TARGET_BRANCH=${{ env.PJ_BRANCH }}
-            JAVA_OPT_XMX=1g
+            JAVA_OPT_XMX=4g
       - name: Build And Push Docker Image For Test
         uses: docker/build-push-action@v3
         with:
