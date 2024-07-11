@@ -17,6 +17,7 @@
 package controllers
 
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
+import com.ideal.linked.toposoid.common.{TRANSVERSAL_STATE, TransversalState}
 import com.ideal.linked.toposoid.knowledgebase.regist.model.{ImageReference, Knowledge, KnowledgeForImage, PropositionRelation, Reference}
 import com.ideal.linked.toposoid.protocol.model.neo4j.Neo4jRecords
 import com.ideal.linked.toposoid.protocol.model.parser.{KnowledgeForParser, KnowledgeSentenceSetForParser}
@@ -36,13 +37,15 @@ import io.jvm.uuid.UUID
 
 class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
 
+  val transversalState:String = Json.toJson(TransversalState(username="guest")).toString()
+
   def registSingleClaim(knowledgeForParser:KnowledgeForParser): Unit = {
     val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
       List.empty[KnowledgeForParser],
       List.empty[PropositionRelation],
       List(knowledgeForParser),
       List.empty[PropositionRelation])
-    Sentence2Neo4jTransformer.createGraph(knowledgeSentenceSetForParser)
+    Sentence2Neo4jTransformer.createGraph(knowledgeSentenceSetForParser, TransversalState(username="guest"))
   }
 
   before {
@@ -63,7 +66,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n ", "target": "" }"""))
       val result= call(controller.getQueryResult(), fr)
       status(result) mustBe OK
@@ -76,7 +79,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
@@ -107,7 +110,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (n:ClaimNode)-[e:LocalEdge]-(m:ClaimNode{isMainSection:'true'}) WHERE n.lang='ja_JP' return n, e, m", "target": "" }"""))
 
       val result = call(controller.getQueryFormattedResult(), fr)
@@ -147,7 +150,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("彼はおにぎりを購入した。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (sn:SynonymNode{nodeName:'御結び'})-[se:SynonymEdge]-(n:ClaimNode{surface:'おにぎりを'})  return sn, se, n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
@@ -162,7 +165,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("彼はおにぎりを購入した。", "ja_JP", "{}", false)))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (sn:SynonymNode{nodeName:'御結び'})-[se:SynonymEdge]-(n:ClaimNode{surface:'おにぎりを'})  return sn, se, n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
@@ -206,7 +209,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
 
       registSingleClaim(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("猫が２匹います。", "ja_JP", "{}", false, List(knowledgeForImage1))))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (in:ImageNode{url:'http://images.cocodataset.org/val2017/000000039769.jpg'})-[ie:ImageEdge]->(n:ClaimNode{surface:'猫が'})  return in, ie, n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK
@@ -225,7 +228,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
 
       registSingleClaim(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("猫が２匹います。", "ja_JP", "{}", false, List(knowledgeForImage1))))
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
-        .withHeaders("Content-type" -> "application/json")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalState)
         .withJsonBody(Json.parse("""{ "query":"MATCH (in:ImageNode{url:'http://images.cocodataset.org/val2017/000000039769.jpg'})-[ie:ImageEdge]->(n:ClaimNode{surface:'猫が'})  return in, ie, n", "target": "" }"""))
       val result = call(controller.getQueryFormattedResult(), fr)
       status(result) mustBe OK

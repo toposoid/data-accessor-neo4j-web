@@ -18,7 +18,7 @@ package controllers
 
 import com.google.gson.{Gson, GsonBuilder}
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
-import com.ideal.linked.toposoid.common.{CLAIM, IMAGE, PREMISE}
+import com.ideal.linked.toposoid.common.{CLAIM, IMAGE, PREMISE, TRANSVERSAL_STATE, ToposoidUtils, TransversalState}
 import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseNode, KnowledgeBaseSemiGlobalEdge, KnowledgeBaseSemiGlobalNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, KnowledgeFeatureReference, KnowledgeFeatureReferenceEdge, LocalContext, LocalContextForFeature, OtherElement, PredicateArgumentStructure}
 import com.ideal.linked.toposoid.protocol.model.neo4j.{CypherQuery, Neo4jRecodeUnit, Neo4jRecordMap, Neo4jRecords}
 import com.typesafe.scalalogging.LazyLogging
@@ -44,10 +44,10 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    */
   @deprecated("Reason: There is a problem with deserialization")
   def getQueryResult()  = Action(parse.json) { request =>
+    val transversalState = Json.parse(request.headers.get(TRANSVERSAL_STATE .str).get).as[TransversalState]
     try {
       val json = request.body
       val cypherQuery:CypherQuery = Json.parse(json.toString).as[CypherQuery]
-      logger.debug(cypherQuery.query)
       val result:Result = Neo4JAccessor.executeQueryAndReturn(cypherQuery.query)
       val jsonStrBf = new StringBuilder
       val gson:Gson = new GsonBuilder().disableHtmlEscaping().create()
@@ -61,12 +61,14 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         recordNo += 1
       }
       jsonStrBf.append("]}")
+      logger.debug(cypherQuery.query)
       logger.debug(convert(jsonStrBf.toString()))
+      logger.info(ToposoidUtils.formatMessageForLogger("Issuing a query to Neo4j completed.", transversalState.username))
       Ok(convert(jsonStrBf.toString())).as(JSON)
 
     }catch{
       case e: Exception => {
-        logger.error(e.toString, e)
+        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.username), e)
         BadRequest(Json.obj("status" ->"Error", "message" -> e.toString()))
       }
     }
@@ -77,10 +79,10 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * @return
    */
   def getQueryFormattedResult()  = Action(parse.json) { request =>
+    val transversalState = Json.parse(request.headers.get(TRANSVERSAL_STATE .str).get).as[TransversalState]
     try {
       val json = request.body
       val cypherQuery:CypherQuery = Json.parse(json.toString).as[CypherQuery]
-      logger.info(cypherQuery.query)
       val result:Result = Neo4JAccessor.executeQueryAndReturn(cypherQuery.query)
       var recordList:List[List[Neo4jRecordMap]] = List.empty[List[Neo4jRecordMap]]
       while (result.hasNext()) { //カラム方向のループ
@@ -96,11 +98,13 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
         recordList = recordList :+ recordMapList
       }
       val neo4jRecords:Neo4jRecords = new Neo4jRecords(recordList)
+      logger.debug(cypherQuery.query)
+      logger.info(ToposoidUtils.formatMessageForLogger("Issuing a query to Neo4j completed.", transversalState.username))
       Ok(Json.toJson(neo4jRecords)).as(JSON)
 
     }catch{
       case e: Exception => {
-        logger.error(e.toString, e)
+        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.username), e)
         BadRequest(Json.obj("status" ->"Error", "message" -> e.toString()))
       }
     }
