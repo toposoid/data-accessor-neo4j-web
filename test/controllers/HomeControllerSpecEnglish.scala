@@ -35,7 +35,7 @@ import io.jvm.uuid.UUID
 
 class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
 
-  val transversalState:String = Json.toJson(TransversalState(username="guest")).toString()
+  val transversalState:String = Json.toJson(TransversalState(userId="test-user", username="guest", roleId=0, csrfToken = "")).toString()
 
   def registSingleClaim(knowledgeForParser:KnowledgeForParser): Unit = {
     val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
@@ -43,7 +43,7 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       List.empty[PropositionRelation],
       List(knowledgeForParser),
       List.empty[PropositionRelation])
-    Sentence2Neo4jTransformer.createGraph(knowledgeSentenceSetForParser, TransversalState(username="guest"))
+    Sentence2Neo4jTransformer.createGraph(knowledgeSentenceSetForParser, TransversalState(userId="test-user", username="guest", roleId=0, csrfToken = ""))
   }
 
   before {

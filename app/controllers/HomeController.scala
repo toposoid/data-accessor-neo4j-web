@@ -63,12 +63,12 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       jsonStrBf.append("]}")
       logger.debug(cypherQuery.query)
       logger.debug(convert(jsonStrBf.toString()))
-      logger.info(ToposoidUtils.formatMessageForLogger("Issuing a query to Neo4j completed.", transversalState.username))
+      logger.info(ToposoidUtils.formatMessageForLogger("Issuing a query to Neo4j completed.", transversalState.userId))
       Ok(convert(jsonStrBf.toString())).as(JSON)
 
     }catch{
       case e: Exception => {
-        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.username), e)
+        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.userId), e)
         BadRequest(Json.obj("status" ->"Error", "message" -> e.toString()))
       }
     }
@@ -99,12 +99,12 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       }
       val neo4jRecords:Neo4jRecords = new Neo4jRecords(recordList)
       logger.debug(cypherQuery.query)
-      logger.info(ToposoidUtils.formatMessageForLogger("Issuing a query to Neo4j completed.", transversalState.username))
+      logger.info(ToposoidUtils.formatMessageForLogger("Issuing a query to Neo4j completed.", transversalState.userId))
       Ok(Json.toJson(neo4jRecords)).as(JSON)
 
     }catch{
       case e: Exception => {
-        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.username), e)
+        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.userId), e)
         BadRequest(Json.obj("status" ->"Error", "message" -> e.toString()))
       }
     }
