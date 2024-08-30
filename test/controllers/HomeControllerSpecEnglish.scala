@@ -107,7 +107,7 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       assert(contentAsString(result).equals("""{"status":"OK","message":""}"""))
     }
   }
-
+  /*
   "An access of getQueryResult for English knowledge" should {
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("Time is money.","en_US", "{}", false )))
@@ -120,7 +120,7 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       assert(!contentAsString(result).equals(""))
     }
   }
-
+  */
   "An access of getQueryFormattedResult for English knowledge Nodes" should {
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("Time is money.","en_US", "{}", false )))

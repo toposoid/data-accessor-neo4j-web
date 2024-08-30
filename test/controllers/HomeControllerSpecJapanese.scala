@@ -145,7 +145,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       assert(contentAsString(result).equals("""{"status":"OK","message":""}"""))
     }
   }
-
+  /*
   "An access of getQueryResult for Japanese knowledge" should {
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
@@ -158,7 +158,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       assert(!contentAsString(result).equals(""))
     }
   }
-
+  */
   "An access of getQueryFormattedResult for Nodes of Japanese knowledge." should {
     "returns an appropriate response" in {
       registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))

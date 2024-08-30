@@ -102,7 +102,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
     try {
       val json = request.body
       val cypherQuery:CypherQuery = Json.parse(json.toString).as[CypherQuery]
-      val result:Result = Neo4JAccessor.executeQueryAndReturn(cypherQuery.query)
+      val result:Result = Neo4JAccessor.executeQueryAndReturn(ToposoidUtils.decodeJsonInJson(cypherQuery.query))
       var recordList:List[List[Neo4jRecordMap]] = List.empty[List[Neo4jRecordMap]]
       while (result.hasNext()) { //カラム方向のループ
         val record:Record = result.next()
