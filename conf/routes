@@ -5,5 +5,5 @@
 
 # An example controller showing a sample home page
 POST    /getQueryResult             controllers.HomeController.getQueryResult()
-POST    /getQueryFormattedResult             controllers.HomeController.getQueryFormattedResult()
-
+POST    /getQueryFormattedResult    controllers.HomeController.getQueryFormattedResult()
+POST    /executeQuery               controllers.HomeController.executeQuery()
