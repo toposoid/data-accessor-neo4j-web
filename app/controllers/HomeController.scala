@@ -42,6 +42,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * With json as input When a Cypher Query is requested, the result of executing the query is output as Json.
    * @return
    */
+  /*
   @deprecated("Reason: There is a problem with deserialization")
   def getQueryResult()  = Action(parse.json) { request =>
     val transversalState = Json.parse(request.headers.get(TRANSVERSAL_STATE .str).get).as[TransversalState]
@@ -73,8 +74,26 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
       }
     }
   }
-
+  */
   /**
+   *
+   * @return
+   */
+  def executeQuery()= Action(parse.json) { request =>
+    val transversalState = Json.parse(request.headers.get(TRANSVERSAL_STATE.str).get).as[TransversalState]
+    try {
+      val json = request.body
+      val cypherQuery: CypherQuery = Json.parse(json.toString).as[CypherQuery]
+      Neo4JAccessor.executeQuery(ToposoidUtils.decodeJsonInJson(cypherQuery.query))
+      Ok(Json.obj("status" ->"OK", "message" -> ""))
+    } catch {
+      case e: Exception => {
+        logger.error(ToposoidUtils.formatMessageForLogger(e.toString, transversalState.userId), e)
+        BadRequest(Json.obj("status" -> "Error", "message" -> e.toString()))
+      }
+    }
+  }
+    /**
    * With json as input When a Cypher Query is requested, the result of executing the query is output as Json.
    * @return
    */
