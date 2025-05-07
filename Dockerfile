@@ -6,7 +6,13 @@ ARG JAVA_OPT_XMX
 ENV DEPLOYMENT=local
 ENV _JAVA_OPTIONS="-Xms512m -Xmx"${JAVA_OPT_XMX}
 
-RUN git clone https://github.com/toposoid/scala-data-accessor-neo4j-web.git \
+RUN git clone https://github.com/toposoid/scala-data-accessor-neo4j.git \
+&& cd scala-data-accessor-neo4j \
+&& git fetch origin ${TARGET_BRANCH} \
+&& git checkout ${TARGET_BRANCH} \
+&& sbt publishLocal \
+&& rm -Rf ./target \
+&& git clone https://github.com/toposoid/scala-data-accessor-neo4j-web.git \
 && cd scala-data-accessor-neo4j-web \
 && git fetch origin ${TARGET_BRANCH} \
 && git checkout ${TARGET_BRANCH} \
