@@ -37,18 +37,7 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
   val transversalState: TransversalState = TransversalState(userId = "test-user", username = "guest", roleId = 0, csrfToken = "")
   val transversalStateJson: String = Json.toJson(transversalState).toString()
   val neo4JUtils = new Neo4JUtilsImpl()
-  /*
-  def registSingleClaim(knowledgeForParser: KnowledgeForParser): Unit = {
-    val asos = TestUtils.getAnalyzedSentenceObjects(knowledgeForParser, transversalState)
-    val analyzedPropositionPair: AnalyzedPropositionPair = AnalyzedPropositionPair(asos, knowledgeForParser)
-    val analyzedPropositionSet = AnalyzedPropositionSet(
-      List.empty[AnalyzedPropositionPair],
-      List.empty[PropositionRelation],
-      List(analyzedPropositionPair),
-      List.empty[PropositionRelation])
-    Sentence2Neo4jTransformer.createGraph(analyzedPropositionSet, transversalState, neo4JUtils)
-  }
-  */
+
   before {
     Neo4JAccessor.delete()
   }

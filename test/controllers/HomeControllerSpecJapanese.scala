@@ -21,7 +21,6 @@ import com.ideal.linked.toposoid.common.{TRANSVERSAL_STATE, ToposoidUtils, Trans
 import com.ideal.linked.toposoid.knowledgebase.regist.model.{DocumentPageReference, ImageReference, Knowledge, KnowledgeForDocument, KnowledgeForImage, PropositionRelation, Reference}
 import com.ideal.linked.toposoid.protocol.model.neo4j.Neo4jRecords
 import com.ideal.linked.toposoid.protocol.model.parser.{KnowledgeForParser, KnowledgeSentenceSetForParser}
-import com.ideal.linked.toposoid.sentence.transformer.neo4j.{AnalyzedPropositionPair, AnalyzedPropositionSet, Neo4JUtils, Sentence2Neo4jTransformer}
 import com.ideal.linked.toposoid.test.utils.TestUtils
 import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
@@ -41,18 +40,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
   val transversalState:TransversalState = TransversalState(userId="test-user", username="guest", roleId=0, csrfToken = "")
   val transversalStateJson:String = Json.toJson(transversalState).toString()
   val neo4JUtils = new Neo4JUtilsImpl()
-  /*
-  def registSingleClaim(knowledgeForParser:KnowledgeForParser): Unit = {
-    val asos = TestUtils.getAnalyzedSentenceObjects(knowledgeForParser, transversalState)
-    val analyzedPropositionPair:AnalyzedPropositionPair = AnalyzedPropositionPair(asos, knowledgeForParser)
-    val analyzedPropositionSet = AnalyzedPropositionSet(
-      List.empty[AnalyzedPropositionPair],
-      List.empty[PropositionRelation],
-      List(analyzedPropositionPair),
-      List.empty[PropositionRelation])
-    Sentence2Neo4jTransformer.createGraph(analyzedPropositionSet, transversalState, neo4JUtils)
-  }
-  */
+
   before {
     Neo4JAccessor.delete()
   }
