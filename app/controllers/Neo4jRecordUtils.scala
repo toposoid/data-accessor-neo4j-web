@@ -104,9 +104,9 @@ object Neo4jRecordUtils {
           )
 
           val semiGlobalNode: KnowledgeBaseSemiGlobalNode = new KnowledgeBaseSemiGlobalNode(
-            node.get("semiGlobalNodeId").asString(),
-            node.get("propositionId").asString(),
             node.get("sentenceId").asString(),
+            node.get("propositionId").asString(),
+            node.get("documentId").asString(),
             node.get("sentence").asString(),
             sentenceType,
             localContextForFeature,
