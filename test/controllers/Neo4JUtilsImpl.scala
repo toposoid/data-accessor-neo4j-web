@@ -17,9 +17,8 @@
 package controllers
 
 import com.ideal.linked.data.accessor.neo4j.Neo4JAccessor
-import com.ideal.linked.toposoid.common.{ToposoidUtils, TransversalState}
+import com.ideal.linked.toposoid.common.{Neo4JUtils, ToposoidUtils, TransversalState}
 import com.ideal.linked.toposoid.protocol.model.neo4j.{Neo4jRecordMap, Neo4jRecords}
-import com.ideal.linked.toposoid.sentence.transformer.neo4j.Neo4JUtils
 import org.neo4j.driver.internal.value.ValueAdapter
 import org.neo4j.driver.{Record, Result}
 import play.api.libs.json.Json
