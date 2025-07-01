@@ -1,5 +1,5 @@
 import de.heikoseeberger.sbtheader.License
-name := """scala-data-accessor-neo4j-web"""
+name := """data-accessor-neo4j-web"""
 organization := "com.ideal.linked"
 version := "0.6-SNAPSHOT"
 
