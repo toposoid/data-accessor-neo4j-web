@@ -1,10 +1,10 @@
 version: '3'
 services:
-  scala-data-accessor-neo4j-web:
-    image: scala-data-accessor-neo4j-web:0.6-SNAPSHOT
+  data-accessor-neo4j-web:
+    image: data-accessor-neo4j-web:0.6-SNAPSHOT
     tty: true
     environment:
-      - PRIVATE_IP_ADDRESS=scala-data-accessor-neo4j-web
+      - PRIVATE_IP_ADDRESS=data-accessor-neo4j-web
       - TOPOSOID_GRAPHDB_HOST=neo4j
       - TOPOSOID_SENTENCE_PARSER_JP_WEB_HOST=toposoid-sentence-parser-japanese-web
       - TOPOSOID_SENTENCE_PARSER_JP_WEB_PORT=9001
