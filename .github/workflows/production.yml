@@ -12,7 +12,7 @@ env:
   PJ_BRANCH: main
   PJ_VERSION: 0.5
 jobs:
-  unit-test_scala-data-accessor-neo4j-web:
+  unit-test_data-accessor-neo4j-web:
     runs-on: self-hosted
     steps:
       - name: Clone ${{ env.PJ_REPO }}
