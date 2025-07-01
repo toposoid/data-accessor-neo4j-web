@@ -2,7 +2,6 @@ FROM toposoid/toposoid-scala-lib:0.6-SNAPSHOT
 
 WORKDIR /app
 ARG TARGET_BRANCH
-ARG JAVA_OPT_XMX
 ENV DEPLOYMENT=local
 
 RUN git clone https://github.com/toposoid/toposoid-test-utils.git \
