@@ -25,13 +25,13 @@ The first startup takes a long time until docker pull finishes.
 ## Usage
 ```bash
 #For unspecified queries
-curl -X POST -H "Content-Type: application/json" -d '{
+curl -X POST -H "Content-Type: application/json" -H 'X_TOPOSOID_TRANSVERSAL_STATE: {"userId":"test-user", "username":"guest", "roleId":0, "csrfToken":""}' -d '{
   "query": "MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode) return n,e,m",
   "target": ""
-}' http://localhost:9005/getQueryResult
+}' http://localhost:9005/executeQuery
 
 #If you want to convert the result to a specific Toposoid object
-curl -X POST -H "Content-Type: application/json" -d '{
+curl -X POST -H "Content-Type: application/json" -H 'X_TOPOSOID_TRANSVERSAL_STATE: {"userId":"test-user", "username":"guest", "roleId":0, "csrfToken":""}' -d '{
   "query": "MATCH (n:ClaimNode)-[e:ClaimEdge]-(m:ClaimNode) return n,e,m",
   "target": ""
 }' http://localhost:9005/getQueryFormattedResult
