@@ -15,7 +15,7 @@ This microservice get information from Neo4J graph database. outputs the result 
 
 ## Recommended Environment For Standalone
 * Required: at least 3GB of RAM (The maximum heap memory size of the JVM is set to 1G (Application: 1G, Neo4J: 2G))
-* Required: at least 1.59G of HDD(Docker Image Size)
+* Required: at least 1.49G of HDD(Docker Image Size)
 
 ## Setup For Standalone
 ```bssh
