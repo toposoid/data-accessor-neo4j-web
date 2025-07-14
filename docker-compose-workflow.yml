@@ -54,7 +54,7 @@ services:
     image: toposoid/toposoid-common-nlp-english-web:0.6-SNAPSHOT-lowspec
     environment:
       - PRIVATE_IP_ADDRESS=toposoid-common-nlp-english-web
-      - TOPOSOID_SYNONYM_NOUN_SIMILARITY_THRESHHOLD_EN=0.52
+      - TOPOSOID_SYNONYM_NOUN_SIMILARITY_THRESHHOLD_EN=0.34
       - TOPOSOID_SYNONYM_VERB_SIMILARITY_THRESHHOLD_EN=0.52
       - TOPOSOID_WORD2VEC_SIMILARITY_THRESHHOLD_EN=0.78
       - TOPOSOID_SENTENCEBERT_MODEL_EN=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
