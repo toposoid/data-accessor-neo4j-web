@@ -19,4 +19,4 @@ fi
 
 export _JAVA_OPTIONS=$_JAVA_OPTIONS
 cd /app/data-accessor-neo4j-web/target/universal
-data-accessor-neo4j-web-0.6-SNAPSHOT/bin/data-accessor-neo4j-web
+data-accessor-neo4j-web-0.6/bin/data-accessor-neo4j-web
