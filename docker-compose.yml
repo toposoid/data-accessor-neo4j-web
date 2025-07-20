@@ -1,7 +1,7 @@
 version: '3'
 services:
   data-accessor-neo4j-web:
-    image: toposoid/data-accessor-neo4j-web:0.6-SNAPSHOT
+    image: toposoid/data-accessor-neo4j-web:0.6
     environment:
       - PRIVATE_IP_ADDRESS=localhost
       - TOPOSOID_GRAPHDB_HOST=neo4j
