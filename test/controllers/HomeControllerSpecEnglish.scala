@@ -22,7 +22,7 @@ import com.ideal.linked.toposoid.common.{TRANSVERSAL_STATE, ToposoidUtils, Trans
 import com.ideal.linked.toposoid.knowledgebase.regist.model.{DocumentPageReference, ImageReference, Knowledge, KnowledgeForDocument, KnowledgeForImage, PropositionRelation, Reference}
 import com.ideal.linked.toposoid.protocol.model.neo4j.Neo4jRecords
 import com.ideal.linked.toposoid.protocol.model.parser.{KnowledgeForParser, KnowledgeSentenceSetForParser}
-import com.ideal.linked.toposoid.test.utils.TestUtils
+//import com.ideal.linked.toposoid.test.utils.TestUtils
 import com.typesafe.scalalogging.LazyLogging
 import org.scalatest.{BeforeAndAfter, BeforeAndAfterAll}
 import org.scalatestplus.play.PlaySpec
@@ -121,7 +121,7 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
         premiseLogicRelation = List.empty[PropositionRelation],
         claimList = List(KnowledgeForParser( java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("Time is money.","en_US", "{}", false ))),
         claimLogicRelation = List.empty[PropositionRelation])
-      TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
+      //TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
         .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
         .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='en_US' RETURN n", "target": "" }"""))

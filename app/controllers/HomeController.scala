@@ -32,6 +32,7 @@ import play.api.libs.json.{Json, OWrites, Reads}
 import play.api.mvc._
 
 import scala.jdk.CollectionConverters._
+import play.api.libs.json.JsValue
 
 /**
  * This controller creates an `Action` to get　information from Neo4J graph database.
@@ -80,7 +81,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    *
    * @return
    */
-  def executeQuery()= Action(parse.json) { request =>
+  def executeQuery():Action[JsValue]  = Action(parse.json[JsValue]) { request =>
     val transversalState = Json.parse(request.headers.get(TRANSVERSAL_STATE.str).get).as[TransversalState]
     try {
       val json = request.body
@@ -98,7 +99,7 @@ class HomeController @Inject()(val controllerComponents: ControllerComponents) e
    * With json as input When a Cypher Query is requested, the result of executing the query is output as Json.
    * @return
    */
-  def getQueryFormattedResult()  = Action(parse.json) { request =>
+  def getQueryFormattedResult():Action[JsValue]  = Action(parse.json[JsValue]) { request =>
     val transversalState = Json.parse(request.headers.get(TRANSVERSAL_STATE .str).get).as[TransversalState]
     try {
       val json = request.body

@@ -4,7 +4,7 @@ organization := "com.ideal.linked"
 version := "0.7-SNAPSHOT"
 
 lazy val root = (project in file(".")).enablePlugins(PlayScala).enablePlugins(AutomateHeaderPlugin)
-
+resolvers += Resolver.mavenLocal
 scalaVersion := "3.3.6"
 
 libraryDependencies += guice
