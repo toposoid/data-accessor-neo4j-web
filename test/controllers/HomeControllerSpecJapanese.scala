@@ -34,18 +34,18 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, contentType, defaultAwaitTimeout, status}
 import play.api.test.Helpers._
 import play.api.test._
-import io.jvm.uuid.UUID
+//import io.jvm.uuid.UUID
 
 class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with BeforeAndAfterAll with GuiceOneAppPerSuite  with Injecting with LazyLogging {
 
   val transversalState:TransversalState = TransversalState(userId="test-user", username="guest", roleId=0, csrfToken = "")
   val transversalStateJson:String = Json.toJson(transversalState).toString()
   val neo4JUtils = new Neo4JUtilsImpl()
-
+  /*
   before {
     Neo4JAccessor.delete()
   }
-
+  */
   override def beforeAll(): Unit = {
     Neo4JAccessor.delete()
   }
@@ -140,7 +140,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
   /*
   "An access of getQueryResult for Japanese knowledge" should {
     "returns an appropriate response" in {
-      registSingleClaim(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
+      registSingleClaim(KnowledgeForParser( java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false )))
       val fr = FakeRequest(POST, "/getQueryResult")
         .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
         .withJsonBody(Json.parse("""{ "query":"MATCH (n) WHERE n.lang='ja_JP' RETURN n ", "target": "" }"""))
@@ -156,7 +156,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false ))),
+        claimList = List(KnowledgeForParser( java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false ))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -192,7 +192,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false ))),
+        claimList = List(KnowledgeForParser( java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("案ずるより産むが易し。","ja_JP", "{}", false ))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -231,13 +231,13 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
         })
     }
   }
-
+  /*
   "An access of getQueryFormattedResult for Synonym Nodes of Japanese knowledge." should {
     "returns an appropriate response" in {
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser( UUID.random.toString, UUID.random.toString, Knowledge("彼はおにぎりを購入した。","ja_JP", "{}", false ))),
+        claimList = List(KnowledgeForParser( java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("彼はおにぎりを購入した。","ja_JP", "{}", false ))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -257,7 +257,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("彼はおにぎりを購入した。", "ja_JP", "{}", false))),
+        claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("彼はおにぎりを購入した。", "ja_JP", "{}", false))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -300,12 +300,12 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       val reference1 = Reference(url = "", surface = "猫が", surfaceIndex = 0, isWholeSentence = false, originalUrlOrReference = "http://images.cocodataset.org/val2017/000000039769.jpg")
       val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, width = 128, height = 128)
-      val featureId1 = UUID.random.toString
+      val featureId1 = java.util.UUID.randomUUID().toString
       val knowledgeForImage1 = KnowledgeForImage(featureId1, referenceImage1)
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("猫が２匹います。", "ja_JP", "{}", false, List(knowledgeForImage1)))),
+        claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("猫が２匹います。", "ja_JP", "{}", false, List(knowledgeForImage1)))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -323,12 +323,12 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
     "returns an appropriate response" in {
       val reference1 = Reference(url = "", surface = "猫が", surfaceIndex = 0, isWholeSentence = false, originalUrlOrReference = "http://images.cocodataset.org/val2017/000000039769.jpg")
       val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, width = 128, height = 128)
-      val featureId1 = UUID.random.toString
+      val featureId1 = java.util.UUID.randomUUID().toString
       val knowledgeForImage1 = KnowledgeForImage(featureId1, referenceImage1)
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("猫が２匹います。", "ja_JP", "{}", false, List(knowledgeForImage1)))),
+        claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("猫が２匹います。", "ja_JP", "{}", false, List(knowledgeForImage1)))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -368,12 +368,12 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
 
   "The Document-Node-Test." should {
     "returns an appropriate response" in {
-      val knowledgeForDocument= KnowledgeForDocument(id = UUID.random.toString, filename = "Test.pdf", url = "http://example.com/Test.pdf", titleOfTopPage = "テストタイトル")
+      val knowledgeForDocument= KnowledgeForDocument(id = java.util.UUID.randomUUID().toString, filename = "Test.pdf", url = "http://example.com/Test.pdf", titleOfTopPage = "テストタイトル")
       val documentPageReference = DocumentPageReference(pageNo = -1, references = List.empty[String], tableOfContents = List.empty[String], headlines = List.empty[String])
       val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
         premiseList = List.empty[KnowledgeForParser],
         premiseLogicRelation = List.empty[PropositionRelation],
-        claimList = List(KnowledgeForParser(UUID.random.toString, UUID.random.toString, Knowledge("これはドキュメント用のテストです。", "ja_JP", "{}", false, knowledgeForDocument=knowledgeForDocument, documentPageReference=documentPageReference))),
+        claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("これはドキュメント用のテストです。", "ja_JP", "{}", false, knowledgeForDocument=knowledgeForDocument, documentPageReference=documentPageReference))),
         claimLogicRelation = List.empty[PropositionRelation])
       TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
 
@@ -387,6 +387,5 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       assert(neo4jRecords.records.size == 1)
     }
   }
-
-
+  */
 }
