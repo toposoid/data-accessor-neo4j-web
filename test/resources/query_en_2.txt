@@ -1,0 +1,23 @@
+|MERGE (:ClaimNode {nodeName: "that", nodeId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35-0', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35', currentId:'0', parentId:'1', isMainSection:'true', surface:"That", normalizedName:"that", dependType:'-', caseType:'nsubj', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{}', domains:'{}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'',surfaceYomi:'',modalityType:'-',logicType:'-',morphemes:'["PRON"]',lang:'en_US'})
+|MERGE (:ClaimNode {nodeName: "be", nodeId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35', currentId:'1', parentId:'1', isMainSection:'true', surface:"'s", normalizedName:"be", dependType:'-', caseType:'ROOT', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{}', domains:'{}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'',surfaceYomi:'',modalityType:'-',logicType:'-',morphemes:'["AUX"]',lang:'en_US'})
+|MERGE (:SynonymNode {nodeId:'Be_b2753e05-30ee-45eb-9c40-e6a4ce214d35-1', nodeName:'Be', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: 'Be_b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:ClaimNode {nodeName: "life", nodeId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35-2', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35', currentId:'2', parentId:'1', isMainSection:'true', surface:"life", normalizedName:"life", dependType:'-', caseType:'attr', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{}', domains:'{}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'',surfaceYomi:'',modalityType:'-',logicType:'-',morphemes:'["NOUN"]',lang:'en_US'})
+|MERGE (:SynonymNode {nodeId:'lifespan_b2753e05-30ee-45eb-9c40-e6a4ce214d35-2', nodeName:'lifespan', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: 'lifespan_b2753e05-30ee-45eb-9c40-e6a4ce214d35-2'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-2'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:SynonymNode {nodeId:'spirit_b2753e05-30ee-45eb-9c40-e6a4ce214d35-2', nodeName:'spirit', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: 'spirit_b2753e05-30ee-45eb-9c40-e6a4ce214d35-2'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-2'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:ClaimNode {nodeName: ".", nodeId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35-3', propositionId:'839b4f52-9d2c-476b-bcca-1779426d75e7', sentenceId:'b2753e05-30ee-45eb-9c40-e6a4ce214d35', currentId:'3', parentId:'1', isMainSection:'true', surface:".", normalizedName:".", dependType:'-', caseType:'punct', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{}', domains:'{}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'',surfaceYomi:'',modalityType:'-',logicType:'-',morphemes:'["PUNCT"]',lang:'en_US'})
+|UNION ALL
+|MATCH (s:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-0'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}) MERGE (s)-[:LocalEdge {dependType:'-', caseName:'nsubj', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
+|UNION ALL
+|MATCH (s:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-2'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}) MERGE (s)-[:LocalEdge {dependType:'-', caseName:'attr', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
+|UNION ALL
+|MATCH (s:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-3'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}) MERGE (s)-[:LocalEdge {dependType:'-', caseName:'punct', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
+|

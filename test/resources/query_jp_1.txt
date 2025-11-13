@@ -1,0 +1,26 @@
+|MERGE (:ClaimNode {nodeName: "易しい", nodeId:'599ac154-f286-4d59-b665-20d0fa163884-2', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884', currentId:'2', parentId:'-1', isMainSection:'true', surface:"易し。", normalizedName:"易しい", dependType:'D', caseType:'文末', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{"":""}', domains:'{"":""}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'やさしい',surfaceYomi:'やさし。',modalityType:'-',logicType:'-',morphemes:'["形容詞,*,イ形容詞イ段,文語基本形","特殊,句点,*,*"]',lang:'ja_JP'})
+|MERGE (:ClaimNode {nodeName: "産む", nodeId:'599ac154-f286-4d59-b665-20d0fa163884-1', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884', currentId:'1', parentId:'2', isMainSection:'false', surface:"産むが", normalizedName:"産む", dependType:'D', caseType:'連用', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{"":""}', domains:'{"産む":"家庭・暮らし"}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'うむ',surfaceYomi:'うむが',modalityType:'-',logicType:'-',morphemes:'["動詞,*,子音動詞マ行,基本形","助詞,接続助詞,*,*"]',lang:'ja_JP'})
+|MERGE (:SynonymNode {nodeId:'儲ける_599ac154-f286-4d59-b665-20d0fa163884-1', nodeName:'儲ける', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: '儲ける_599ac154-f286-4d59-b665-20d0fa163884-1'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-1'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:SynonymNode {nodeId:'生む_599ac154-f286-4d59-b665-20d0fa163884-1', nodeName:'生む', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: '生む_599ac154-f286-4d59-b665-20d0fa163884-1'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-1'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:SynonymNode {nodeId:'出産_599ac154-f286-4d59-b665-20d0fa163884-1', nodeName:'出産', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: '出産_599ac154-f286-4d59-b665-20d0fa163884-1'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-1'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:SynonymNode {nodeId:'産み落とす_599ac154-f286-4d59-b665-20d0fa163884-1', nodeName:'産み落とす', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: '産み落とす_599ac154-f286-4d59-b665-20d0fa163884-1'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-1'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MERGE (:ClaimNode {nodeName: "案ずる", nodeId:'599ac154-f286-4d59-b665-20d0fa163884-0', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884', currentId:'0', parentId:'1', isMainSection:'false', surface:"案ずるより", normalizedName:"案ずる", dependType:'D', caseType:'連用', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{"":""}', domains:'{"":""}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'あんずる',surfaceYomi:'あんずるより',modalityType:'-',logicType:'-',morphemes:'["動詞,*,ザ変動詞,基本形","助詞,接続助詞,*,*"]',lang:'ja_JP'})
+|MERGE (:SynonymNode {nodeId:'案じる_599ac154-f286-4d59-b665-20d0fa163884-0', nodeName:'案じる', propositionId:'fbc9781d-eecf-402a-bb87-10de10d886d6', sentenceId:'599ac154-f286-4d59-b665-20d0fa163884'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: '案じる_599ac154-f286-4d59-b665-20d0fa163884-0'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-0'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
+|MATCH (s:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-1'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-2'}) MERGE (s)-[:LocalEdge {dependType:'D', caseName:'連用', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
+|UNION ALL
+|MATCH (s:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-0'}), (d:ClaimNode {nodeId: '599ac154-f286-4d59-b665-20d0fa163884-1'}) MERGE (s)-[:LocalEdge {dependType:'D', caseName:'連用', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
