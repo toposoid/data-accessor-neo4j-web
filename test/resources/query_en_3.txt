@@ -23,6 +23,10 @@
 |MATCH (s:SynonymNode {nodeId: 'throw_9337905f-993c-45d8-8506-8ff8ba54a1c8-1'}), (d:ClaimNode {nodeId: '9337905f-993c-45d8-8506-8ff8ba54a1c8-1'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
 |UNION ALL
 |MERGE (:ClaimNode {nodeName: "chance", nodeId:'9337905f-993c-45d8-8506-8ff8ba54a1c8-4', propositionId:'d17221d1-14a2-4de6-bd08-8e30f22ef5a8', sentenceId:'9337905f-993c-45d8-8506-8ff8ba54a1c8', currentId:'4', parentId:'1', isMainSection:'true', surface:"chance", normalizedName:"chance", dependType:'-', caseType:'dobj', namedEntity:'', rangeExpressions:'{"":{}}', categories:'{}', domains:'{}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'',surfaceYomi:'',modalityType:'-',logicType:'-',morphemes:'["NOUN"]',lang:'en_US'})
+|MERGE (:SynonymNode {nodeId:'opportunity_9337905f-993c-45d8-8506-8ff8ba54a1c8-4', nodeName:'opportunity', propositionId:'d17221d1-14a2-4de6-bd08-8e30f22ef5a8', sentenceId:'9337905f-993c-45d8-8506-8ff8ba54a1c8'})
+|UNION ALL
+|MATCH (s:SynonymNode {nodeId: 'opportunity_9337905f-993c-45d8-8506-8ff8ba54a1c8-4'}), (d:ClaimNode {nodeId: '9337905f-993c-45d8-8506-8ff8ba54a1c8-4'}) MERGE (s)-[:SynonymEdge {similarity:0.5}]->(d)
+|UNION ALL
 |MERGE (:ClaimNode {nodeName: "he", nodeId:'9337905f-993c-45d8-8506-8ff8ba54a1c8-0', propositionId:'d17221d1-14a2-4de6-bd08-8e30f22ef5a8', sentenceId:'9337905f-993c-45d8-8506-8ff8ba54a1c8', currentId:'0', parentId:'1', isMainSection:'true', surface:"He", normalizedName:"he", dependType:'-', caseType:'nsubj', namedEntity:'PERSON', rangeExpressions:'{"He":{"quantity":"","unit":"","range":"","prefix":""}}', categories:'{}', domains:'{}', knowledgeFeatureReferences:'[]', isDenialWord:'false',isConditionalConnection:'false',normalizedNameYomi:'',surfaceYomi:'',modalityType:'-',logicType:'-',morphemes:'["PRON"]',lang:'en_US'})
 |MERGE (:SynonymNode {nodeId:'He_9337905f-993c-45d8-8506-8ff8ba54a1c8-0', nodeName:'He', propositionId:'d17221d1-14a2-4de6-bd08-8e30f22ef5a8', sentenceId:'9337905f-993c-45d8-8506-8ff8ba54a1c8'})
 |UNION ALL

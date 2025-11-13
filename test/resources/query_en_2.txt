@@ -20,4 +20,3 @@
 |MATCH (s:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-2'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}) MERGE (s)-[:LocalEdge {dependType:'-', caseName:'attr', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
 |UNION ALL
 |MATCH (s:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-3'}), (d:ClaimNode {nodeId: 'b2753e05-30ee-45eb-9c40-e6a4ce214d35-1'}) MERGE (s)-[:LocalEdge {dependType:'-', caseName:'punct', parallelType:'-', hasInclusion:'false', logicType:'-'}]->(d) 
-|
