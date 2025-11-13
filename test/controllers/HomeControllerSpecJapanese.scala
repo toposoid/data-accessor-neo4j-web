@@ -308,7 +308,7 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       assert(neo4jRecords.records.size == 1)
     }
   }
-
+  
   "The Document-GlobalNode-Test." should {
     "returns an appropriate response" in {
       val fr = FakeRequest(POST, "/getQueryFormattedResult")
@@ -321,5 +321,5 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
       assert(neo4jRecords.records.size == 1)
     }
   }
-
+  
 }

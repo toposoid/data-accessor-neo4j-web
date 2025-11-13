@@ -262,19 +262,26 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       })
     }
   }
-  /*
-    "An access of getQueryFormattedResult for Image Nodes of English knowledge." should {
+  
+
+  "An access of executeQuery for registering English knowledge4" should {
+    "returns an appropriate response" in {
+      val query: String = Source.fromResource("query_en_4.txt").mkString.stripMargin
+      val convertQuery = ToposoidUtils.encodeJsonInJson(query)
+      val json = s"""{ "query":"$convertQuery", "target": "" }"""
+      val fr = FakeRequest(POST, "/executeQuery")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+        .withJsonBody(Json.parse(json))
+      val result = call(controller.executeQuery(), fr)
+      status(result) mustBe OK
+      contentType(result) mustBe Some("application/json")
+      assert(contentAsString(result).equals("""{"status":"OK","message":""}"""))
+    }
+  }
+
+
+  "An access of getQueryFormattedResult for Image Nodes of English knowledge4." should {
       "returns an appropriate response" in {
-        val reference1 = Reference(url = "", surface = "cats", surfaceIndex = 3, isWholeSentence = false, originalUrlOrReference = "http://images.cocodataset.org/val2017/000000039769.jpg")
-        val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, width = 128, height = 128)
-        val featureId1 = java.util.UUID.randomUUID().toString
-        val knowledgeForImage1 = KnowledgeForImage(featureId1, referenceImage1)
-        val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
-          premiseList = List.empty[KnowledgeForParser],
-          premiseLogicRelation = List.empty[PropositionRelation],
-          claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("There are two cats.", "en_US", "{}", false, List(knowledgeForImage1)))),
-          claimLogicRelation = List.empty[PropositionRelation])
-        TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
         val fr = FakeRequest(POST, "/getQueryFormattedResult")
           .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
           .withJsonBody(Json.parse("""{ "query":"MATCH (in:ImageNode{source:'http://images.cocodataset.org/val2017/000000039769.jpg'})-[ie:ImageEdge]->(n:ClaimNode{surface:'cats'})  return in, ie, n", "target": "" }"""))
@@ -286,18 +293,12 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       }
     }
 
-    "An access of getQueryFormattedResult for Image Edges of Japanese knowledge." should {
+    "An access of getQueryFormattedResult for Image Edges of Japanese knowledge4." should {
       "returns an appropriate response" in {
         val reference1 = Reference(url = "", surface = "cats", surfaceIndex = 3, isWholeSentence = false, originalUrlOrReference = "http://images.cocodataset.org/val2017/000000039769.jpg")
         val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, width = 128, height = 128)
         val featureId1 = java.util.UUID.randomUUID().toString
         val knowledgeForImage1 = KnowledgeForImage(featureId1, referenceImage1)
-        val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
-          premiseList = List.empty[KnowledgeForParser],
-          premiseLogicRelation = List.empty[PropositionRelation],
-          claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("There are two cats.", "en_US", "{}", false, List(knowledgeForImage1)))),
-          claimLogicRelation = List.empty[PropositionRelation])
-        TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
         val fr = FakeRequest(POST, "/getQueryFormattedResult")
           .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
           .withJsonBody(Json.parse("""{ "query":"MATCH (in:ImageNode{source:'http://images.cocodataset.org/val2017/000000039769.jpg'})-[ie:ImageEdge]->(n:ClaimNode{surface:'猫が'})  return in, ie, n", "target": "" }"""))
@@ -333,17 +334,37 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       }
     }
 
-    "The Document-Node-Test." should {
-      "returns an appropriate response" in {
-        val knowledgeForDocument = KnowledgeForDocument(id = java.util.UUID.randomUUID().toString, filename = "Test.pdf", url = "http://example.com/Test.pdf", titleOfTopPage = "TestTitle")
-        val documentPageReference = DocumentPageReference(pageNo = -1, references = List.empty[String], tableOfContents = List.empty[String], headlines = List.empty[String])
-        val knowledgeSentenceSetForParser = KnowledgeSentenceSetForParser(
-          premiseList = List.empty[KnowledgeForParser],
-          premiseLogicRelation = List.empty[PropositionRelation],
-          claimList = List(KnowledgeForParser(java.util.UUID.randomUUID().toString, java.util.UUID.randomUUID().toString, Knowledge("This is a documentation test.", "en_US", "{}", false, knowledgeForDocument = knowledgeForDocument, documentPageReference = documentPageReference))),
-          claimLogicRelation = List.empty[PropositionRelation])
-        TestUtils.registerData(knowledgeSentenceSetForParser, transversalState, addVectorFlag = false, neo4JUtilsObject = neo4JUtils)
+  "An access of executeQuery for registering English knowledge5" should {
+    "returns an appropriate response" in {
+      val query: String = Source.fromResource("query_en_5.txt").mkString.stripMargin
+      val convertQuery = ToposoidUtils.encodeJsonInJson(query)
+      val json = s"""{ "query":"$convertQuery", "target": "" }"""
+      val fr = FakeRequest(POST, "/executeQuery")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+        .withJsonBody(Json.parse(json))
+      val result = call(controller.executeQuery(), fr)
+      status(result) mustBe OK
+      contentType(result) mustBe Some("application/json")
+      assert(contentAsString(result).equals("""{"status":"OK","message":""}"""))
+    }
+  }
 
+
+  "The Document-Semi-GlobalNode-Test." should {
+      "returns an appropriate response" in {
+        val fr = FakeRequest(POST, "/getQueryFormattedResult")
+          .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+          .withJsonBody(Json.parse("""{ "query":"MATCH x = (:SemiGlobalClaimNode{sentence:'This is a documentation test.'}) RETURN x", "target": "" }"""))
+        val result = call(controller.getQueryFormattedResult(), fr)
+        status(result) mustBe OK
+        val jsonResult: String = contentAsJson(result).toString()
+        val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+        assert(neo4jRecords.records.size == 1)
+      }
+  }
+
+  "The Document-GlobalNode-Test." should {
+      "returns an appropriate response" in {
         val fr = FakeRequest(POST, "/getQueryFormattedResult")
           .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
           .withJsonBody(Json.parse("""{ "query":"MATCH x = (:GlobalNode{titleOfTopPage:'TestTitle'}) RETURN x", "target": "" }"""))
@@ -353,7 +374,6 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
         val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
         assert(neo4jRecords.records.size == 1)
       }
-    }
   }
-  */
+
 }
