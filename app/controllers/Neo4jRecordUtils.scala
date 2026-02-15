@@ -17,7 +17,7 @@
 
 package controllers
 
-import com.ideal.linked.toposoid.common.{CLAIM, IMAGE, PREMISE, TABLE}
+import com.ideal.linked.toposoid.common.{SentenceType, FeatureType}
 import com.ideal.linked.toposoid.knowledgebase.model.{KnowledgeBaseEdge, KnowledgeBaseGlobalNode, KnowledgeBaseNode, KnowledgeBaseSemiGlobalEdge, KnowledgeBaseSemiGlobalNode, KnowledgeBaseSynonymEdge, KnowledgeBaseSynonymNode, KnowledgeFeatureReference, KnowledgeFeatureReferenceEdge, LocalContext, LocalContextForFeature, OtherElement, PredicateArgumentStructure}
 import com.ideal.linked.toposoid.protocol.model.neo4j.Neo4jRecodeUnit
 import org.neo4j.driver.internal.value.{NodeValue, RelationshipValue, StringValue, ValueAdapter}
@@ -52,17 +52,18 @@ object Neo4jRecordUtils {
         if (node.asNode().hasLabel("PremiseNode") || node.asNode().hasLabel("ClaimNode")) {
 
           val nodeType: Int = node.asNode().hasLabel("PremiseNode") match {
-            case true => PREMISE.index
-            case _ => CLAIM.index
+            case true => SentenceType.PREMISE.index
+            case _ => SentenceType.CLAIM.index
           }
 
           val localContext: LocalContext = new LocalContext(
             lang = node.get("lang").asString(),
-            namedEntity = node.get("namedEntity").asString(),
+            namedEntities = convertMap(node.get("namedEntities").asString()),
             rangeExpressions = convertMapForRangeExpression(node.get("rangeExpressions").asString()),
             categories = convertMap(node.get("categories").asString()),
             domains = convertMap(node.get("domains").asString()),
-            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString())
+            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString()),
+            properNouns = convertMap(node.get("properNouns").asString()) 
           )
 
           val predicateArgumentStructure = new PredicateArgumentStructure(
@@ -80,7 +81,10 @@ object Neo4jRecordUtils {
             modalityType = node.get("modalityType").asString(),
             parallelType = node.get("parallelType").asString(),
             nodeType = nodeType,
-            morphemes = convertListMorphemes(node.get("morphemes").asString())
+            morphemes = convertListMorphemes(node.get("morphemes").asString()),
+            caseGroupType = node.get("caseGroupType").asString().toInt,
+            casePhraseId = node.get("casePhraseId").asString(),
+            casePhrase = node.get("casePhrase").asString()
           )
 
           val logicNode: KnowledgeBaseNode = new KnowledgeBaseNode(
@@ -95,8 +99,8 @@ object Neo4jRecordUtils {
         } else if (node.asNode().hasLabel("SemiGlobalPremiseNode") || node.asNode().hasLabel("SemiGlobalClaimNode")) {
 
           val sentenceType: Int = node.asNode().hasLabel("SemiGlobalPremiseNode") match {
-            case true => PREMISE.index
-            case _ => CLAIM.index
+            case true => SentenceType.PREMISE.index
+            case _ => SentenceType.CLAIM.index
           }
 
           val localContextForFeature: LocalContextForFeature = new LocalContextForFeature(
@@ -137,7 +141,7 @@ object Neo4jRecordUtils {
             propositionId = node.get("propositionId").asString(),
             sentenceId = node.get("sentenceId").asString(),
             featureId = node.get("featureId").asString(),
-            featureType = IMAGE.index,
+            featureType = FeatureType.IMAGE.index,
             url = node.get("url").asString(),
             source = node.get("source").asString()
           )
@@ -147,7 +151,7 @@ object Neo4jRecordUtils {
             propositionId = node.get("propositionId").asString(),
             sentenceId = node.get("sentenceId").asString(),
             featureId = node.get("featureId").asString(),
-            featureType = TABLE.index,
+            featureType = FeatureType.TABLE.index,
             url = node.get("url").asString(),
             source = node.get("source").asString()
           )
