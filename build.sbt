@@ -8,13 +8,17 @@ resolvers += Resolver.mavenLocal
 scalaVersion := "3.3.6"
 
 libraryDependencies += guice
-libraryDependencies += "com.ideal.linked" %% "scala-common" % "0.7-SNAPSHOT"
-libraryDependencies += "com.ideal.linked" %% "scala-data-accessor-neo4j" % "0.7-SNAPSHOT"
-libraryDependencies += "com.ideal.linked" %% "toposoid-knowledgebase-model" % "0.7-SNAPSHOT"
-libraryDependencies += "com.ideal.linked" %% "toposoid-deduction-protocol-model" % "0.7-SNAPSHOT"
-libraryDependencies += "com.ideal.linked" %% "toposoid-common" % "0.7-SNAPSHOT"
+libraryDependencies += "com.ideal.linked" %% "scala-common" % "0.7-SNAPSHOT" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "com.ideal.linked" %% "scala-data-accessor-neo4j" % "0.7-SNAPSHOT" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "com.ideal.linked" %% "toposoid-knowledgebase-model" % "0.7-SNAPSHOT" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "com.ideal.linked" %% "toposoid-deduction-protocol-model" % "0.7-SNAPSHOT" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "com.ideal.linked" %% "toposoid-common" % "0.7-SNAPSHOT" exclude("org.slf4j","slf4j-api")
 //libraryDependencies += "com.google.code.gson" % "gson" % "2.8.5"
-libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "7.0.2" % Test exclude("org.slf4j","slf4j-api")
+libraryDependencies += "org.apache.pekko" %% "pekko-slf4j" % "1.1.5" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "org.apache.pekko" %% "pekko-serialization-jackson" % "1.1.5" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "org.apache.pekko" %% "pekko-actor-typed" % "1.1.5" exclude("org.slf4j","slf4j-api")
+libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.36" 
 //libraryDependencies += "io.jvm.uuid" %% "scala-uuid" % "0.3.1" % Test
 
 organizationName := "Linked Ideal LLC.[https://linked-ideal.com/]"
