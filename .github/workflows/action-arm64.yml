@@ -8,7 +8,7 @@ env:
   PJ_VERSION: 0.7-SNAPSHOT
 jobs:
   unit-test_data-accessor-neo4j-web-arm64:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Clone ${{ env.PJ_REPO }}
         uses: actions/checkout@v4
@@ -49,6 +49,7 @@ jobs:
         with:
           context: .
           push: true
+          provenance: false
           tags: ${{ env.PJ_ACTOR }}/${{ env.PJ_REPO }}:${{ env.PJ_VERSION }}-arm64
           build-args: |
             TARGET_BRANCH=${{ env.PJ_BRANCH }}
