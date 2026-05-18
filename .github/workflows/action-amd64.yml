@@ -49,6 +49,7 @@ jobs:
         with:
           context: .
           push: true
+          provenance: false
           tags: ${{ env.PJ_ACTOR }}/${{ env.PJ_REPO }}:${{ env.PJ_VERSION }}-amd64
           build-args: |
             TARGET_BRANCH=${{ env.PJ_BRANCH }}
