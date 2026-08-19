@@ -62,7 +62,7 @@ object Neo4jRecordUtils {
             rangeExpressions = convertMapForRangeExpression(node.get("rangeExpressions").asString()),
             categories = convertMap(node.get("categories").asString()),
             domains = convertMap(node.get("domains").asString()),
-            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString()),
+            knowledgeFeatureReferences = List.empty[KnowledgeFeatureReference],
             properNouns = convertMap(node.get("properNouns").asString()) 
           )
 
@@ -105,7 +105,7 @@ object Neo4jRecordUtils {
 
           val localContextForFeature: LocalContextForFeature = new LocalContextForFeature(
             lang = node.get("lang").asString(),
-            knowledgeFeatureReferences = convertList2JsonForKnowledgeFeatureReference(node.get("knowledgeFeatureReferences").asString())
+            knowledgeFeatureReferences = List.empty[KnowledgeFeatureReference]
           )
 
           val semiGlobalNode: KnowledgeBaseSemiGlobalNode = new KnowledgeBaseSemiGlobalNode(

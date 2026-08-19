@@ -293,15 +293,11 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
       }
     }
 
-    "An access of getQueryFormattedResult for Image Edges of Japanese knowledge4." should {
+    "An access of getQueryFormattedResult for Image Edges of English knowledge4." should {
       "returns an appropriate response" in {
-        val reference1 = Reference(url = "", surface = "cats", surfaceIndex = 3, isWholeSentence = false, originalUrlOrReference = "http://images.cocodataset.org/val2017/000000039769.jpg")
-        val referenceImage1 = ImageReference(reference = reference1, x = 0, y = 0, width = 128, height = 128)
-        val featureId1 = java.util.UUID.randomUUID().toString
-        val knowledgeForImage1 = KnowledgeForImage(featureId1, referenceImage1)
         val fr = FakeRequest(POST, "/getQueryFormattedResult")
           .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
-          .withJsonBody(Json.parse("""{ "query":"MATCH (in:ImageNode{source:'http://images.cocodataset.org/val2017/000000039769.jpg'})-[ie:ImageEdge]->(n:ClaimNode{surface:'猫が'})  return in, ie, n", "target": "" }"""))
+          .withJsonBody(Json.parse("""{ "query":"MATCH (in:ImageNode{source:'http://images.cocodataset.org/val2017/000000039769.jpg'})-[ie:ImageEdge]->(n:ClaimNode{surface:'cats'})  return in, ie, n", "target": "" }"""))
         val result = call(controller.getQueryFormattedResult(), fr)
         status(result) mustBe OK
         val jsonResult: String = contentAsJson(result).toString()
@@ -333,6 +329,74 @@ class HomeControllerSpecEnglish extends PlaySpec with BeforeAndAfter with Before
         })
       }
     }
+
+  "An access of executeQuery for registering English knowledge4a" should {
+    "returns an appropriate response" in {
+      val query: String = Source.fromResource("query_en_4a.txt").mkString.stripMargin
+      val convertQuery = ToposoidUtils.encodeJsonInJson(query)
+      val json = s"""{ "query":"$convertQuery", "target": "" }"""
+      val fr = FakeRequest(POST, "/executeQuery")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+        .withJsonBody(Json.parse(json))
+      val result = call(controller.executeQuery(), fr)
+      status(result) mustBe OK
+      contentType(result) mustBe Some("application/json")
+      assert(contentAsString(result).equals("""{"status":"OK","message":""}"""))
+    }
+  }
+
+
+  "An access of getQueryFormattedResult for Table Nodes of English knowledge4a." should {
+      "returns an appropriate response" in {
+        val fr = FakeRequest(POST, "/getQueryFormattedResult")
+          .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+          .withJsonBody(Json.parse("""{ "query":"MATCH (in:TableNode{source:'https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292480&fileKind=1'})-[ie:TableEdge]->(n:ClaimNode{surface:'Figure1'})  return in, ie, n", "target": "" }"""))
+        val result = call(controller.getQueryFormattedResult(), fr)
+        status(result) mustBe OK
+        val jsonResult: String = contentAsJson(result).toString()
+        val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+        assert(neo4jRecords.records.size == 1)
+      }
+    }
+
+    "An access of getQueryFormattedResult for Table Edges of English knowledge4a." should {
+      "returns an appropriate response" in {
+        val fr = FakeRequest(POST, "/getQueryFormattedResult")
+          .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+          .withJsonBody(Json.parse("""{ "query":"MATCH (in:TableNode{source:'https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292480&fileKind=1'})-[ie:TableEdge]->(n:ClaimNode{surface:'Figure1'})  return in, ie, n", "target": "" }"""))
+        val result = call(controller.getQueryFormattedResult(), fr)
+        status(result) mustBe OK
+        val jsonResult: String = contentAsJson(result).toString()
+        val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+        neo4jRecords.records.reverse.map(record => {
+          record.map(x => {
+            x.key match {
+              case "in" => {
+                x.value.featureNode match {
+                  case Some(y) => assert(y.source.equals("https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292480&fileKind=1"))
+                  case _ => assert(false)
+                }
+              }
+              case "ie" => {
+                x.value.featureEdge match {
+                  case Some(y) => assert(true)
+                  case _ => assert(false)
+                }
+              }
+              case "n" => {
+                x.value.localNode match {
+                  case Some(y) => assert(y.predicateArgumentStructure.surface.equals("Figure1"))
+                  case _ => assert(false)
+                }
+              }
+              case _ => assert(false)
+            }
+          })
+        })
+      }
+    }
+
+
 
   "An access of executeQuery for registering English knowledge5" should {
     "returns an appropriate response" in {
