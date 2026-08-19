@@ -48,11 +48,11 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
   }
   */
   override def beforeAll(): Unit = {
-    Neo4JAccessor.delete()
+    //Neo4JAccessor.delete()
   }
 
   override def afterAll(): Unit = {
-    Neo4JAccessor.delete()
+    //Neo4JAccessor.delete()
   }
 
   val controller: HomeController = inject[HomeController]
@@ -270,6 +270,72 @@ class HomeControllerSpecJapanese extends PlaySpec with BeforeAndAfter with Befor
             case "n" => {
               x.value.localNode match {
                 case Some(y) => assert(y.predicateArgumentStructure.surface.equals("猫が"))
+                case _ => assert(false)
+              }
+            }
+            case _ => assert(false)
+          }
+        })
+      })
+    }
+  }
+
+  "An access of executeQuery for registering Japanese knowledge3a" should {
+    "returns an appropriate response" in {
+      val query:String =Source.fromResource("query_jp_3a.txt").mkString.stripMargin
+      val convertQuery = ToposoidUtils.encodeJsonInJson(query)
+      val json = s"""{ "query":"$convertQuery", "target": "" }"""
+
+      val fr = FakeRequest(POST, "/executeQuery")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+        .withJsonBody(Json.parse(json))
+      val result = call(controller.executeQuery(), fr)
+      status(result) mustBe OK
+      contentType(result) mustBe Some("application/json")
+      assert(contentAsString(result).equals("""{"status":"OK","message":""}"""))
+    }
+  }
+
+  "An access of getQueryFormattedResult for Table Nodes of Japanese knowledge3." should {
+    "returns an appropriate response" in {
+      val fr = FakeRequest(POST, "/getQueryFormattedResult")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+        .withJsonBody(Json.parse("""{ "query":"MATCH (in:TableNode{source:'https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292480&fileKind=1'})-[ie:TableEdge]->(n:ClaimNode{surface:'表２です。'})  return in, ie, n", "target": "" }"""))
+      val result = call(controller.getQueryFormattedResult(), fr)
+      status(result) mustBe OK
+      val jsonResult: String = contentAsJson(result).toString()
+      val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+      assert(neo4jRecords.records.size == 1)
+    }
+  }
+
+  "An access of getQueryFormattedResult for Table Edges of Japanese knowledge3." should {
+    "returns an appropriate response" in {
+      val fr = FakeRequest(POST, "/getQueryFormattedResult")
+        .withHeaders("Content-type" -> "application/json", TRANSVERSAL_STATE.str -> transversalStateJson)
+        .withJsonBody(Json.parse("""{ "query":"MATCH (in:TableNode{source:'https://www.e-stat.go.jp/stat-search/file-download?statInfId=000040292480&fileKind=1'})-[ie:ImageEdge]->(n:ClaimNode{surface:'表２です。'})  return in, ie, n", "target": "" }"""))
+      val result = call(controller.getQueryFormattedResult(), fr)
+      status(result) mustBe OK
+      val jsonResult: String = contentAsJson(result).toString()
+      val neo4jRecords: Neo4jRecords = Json.parse(jsonResult).as[Neo4jRecords]
+      neo4jRecords.records.reverse.map(record => {
+        record.map(x => {
+          x.key match {
+            case "in" => {
+              x.value.featureNode match {
+                case Some(y) => assert(y.source.equals("http://xxx/zzz.tsv"))
+                case _ => assert(false)
+              }
+            }
+            case "ie" => {
+              x.value.featureEdge match {
+                case Some(y) => assert(true)
+                case _ => assert(false)
+              }
+            }
+            case "n" => {
+              x.value.localNode match {
+                case Some(y) => assert(y.predicateArgumentStructure.surface.equals("表２です。"))
                 case _ => assert(false)
               }
             }
